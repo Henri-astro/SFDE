@@ -1,17 +1,19 @@
+#own module
+from src.common import IsNumber
 from src.DataReader import cDataReader
 
 
 class cData:
     """A class to hold all the data used by the program"""
     
-    def __init__( self, GCFile, SNFile, EjectaFile ):
+    def __init__( self, GCFile, SNFile, EjectaFile, RemnantFile ):
         """Constructor
         GCFile: a file that holds general information about the GCs
         SNFile: a file that holds information about which stars explode in SNe
         EjectaFile: a file that contains the amount of iron produced by exploding stars depending on their mass"""
         
         #import the GC data
-        GCData = cDataReader( GCFile, ["Name", "Mass", "R_a", "R_p", "SFE", "Fe-H", "FeSpread"] )
+        GCData = cDataReader( GCFile, ["Name", "Mass", "R_a", "R_p", "SFE", "Fe-H", "FeSpread", "Age"] )
         self.__GCData = GCData.GetData()
         
         #import the SN data
@@ -30,12 +32,38 @@ class cData:
         if 0 == len( self.__EjectaData["mass[Msun]"] ):
             raise ValueError( "cData: Empty Ejecta data. Please check your Ejecta file." )
         
+        RemnantData = cDataReader( RemnantFile, ["Mstar"] )
+        self.__RemnantData = RemnantData.GetData()
+        
+        #check that at least one column with t and Mfin is present
+        t_present = False
+        Mfin_present = False
+        
+        for Heading in self.__RemnantData:
+            if Heading[:2] == "t_":
+                if IsNumber( Heading[2:] ):
+                    t_present = True
+                
+            if Heading[:5] == "Mfin_":
+                if IsNumber( Heading[5:] ):
+                    Mfin_present = True
+                        
+        if not t_present:
+            raise ValueError( "cData: time information in Remnant data missing. Please check your Remnant file." )
+        
+        if not Mfin_present:
+            raise ValueError( "cData: final masses in Remnant data missing. Please check your Remnant file." )
+        
+        #make sure the data is not empty
+        if 0 == len( self.__RemnantData["Mstar"] ):
+            raise ValueError( "cData: Empty Remnant data. Please check your Remnant file." )
+        
         
     def AccessGCData( self, ColumnName ):
         """return a single column from the GC data
         ColumnName: the name of the column from which the data shall be returned"""
         
-        return self.__GCData[ ColumnName ]
+        return self.__GCData[ ColumnName ].copy()
     
     
     def AddGCData( self, ColumnName, data ):
@@ -104,3 +132,9 @@ class cData:
             Ejecta = 0.0
             
         return Ejecta
+    
+    
+    def GetRemnantData( self ):
+        """returns a copy of the complete remnant data"""
+        
+        return self.__RemnantData.copy()

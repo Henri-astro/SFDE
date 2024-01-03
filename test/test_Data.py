@@ -6,17 +6,26 @@ from src.Data import cData
 def SetupTest():
     """a function to setup the tests for the cData class"""
     
-    return cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/Ejecta.dat" )
+    return cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/Ejecta.dat", "test/mockdata/RemnantData.dat" )
 
 
 def test_ConstructorExceptions():
     """tests that all exceptions in the constructor are thrown correctly"""
     
     with pytest.raises(ValueError, match=r"cData: Empty SN data. Please check your SN file."):
-        cData( "test/mockdata/GCData.dat", "test/mockdata/0SNe.dat", "test/mockdata/Ejecta.dat" )
+        cData( "test/mockdata/GCData.dat", "test/mockdata/0SNe.dat", "test/mockdata/Ejecta.dat", "test/mockdata/RemnantData.dat" )
         
     with pytest.raises(ValueError, match=r"cData: Empty Ejecta data. Please check your Ejecta file."):
-        cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/0Ejecta.dat" )
+        cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/0Ejecta.dat", "test/mockdata/RemnantData.dat" )
+        
+    with pytest.raises(ValueError, match=r"cData: Empty Remnant data. Please check your Remnant file."):
+        cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/Ejecta.dat", "test/mockdata/0RemnantData.dat" )
+        
+    with pytest.raises(ValueError, match=r"cData: time information in Remnant data missing. Please check your Remnant file."):
+        cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/Ejecta.dat", "test/mockdata/RemnantData_brokent.dat" )
+        
+    with pytest.raises(ValueError, match=r"cData: final masses in Remnant data missing. Please check your Remnant file."):
+        cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/Ejecta.dat", "test/mockdata/RemnantData_brokenMfin.dat" )
 
 
 def test_AccessGCData():
@@ -51,6 +60,10 @@ def test_AccessGCData():
     assert 2 == len( data.AccessGCData( "FeSpread" ) )
     assert 0.033 == pytest.approx( data.AccessGCData( "FeSpread" )[0] )
     assert 0.037 == pytest.approx( data.AccessGCData( "FeSpread" )[1] )
+    
+    assert 2 == len( data.AccessGCData( "Age" ) )
+    assert 12.0 == pytest.approx( data.AccessGCData( "Age" )[0] )
+    assert 12.0 == pytest.approx( data.AccessGCData( "Age" )[1] )
 
 
 def test_AddGCData():
@@ -99,7 +112,7 @@ def test_Ejecta():
     
     #test with only one ejecta value given
     
-    data1ejecta = cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/1Ejecta.dat" )
+    data1ejecta = cData( "test/mockdata/GCData.dat", "test/mockdata/SNe.dat", "test/mockdata/1Ejecta.dat", "test/mockdata/RemnantData.dat" )
     
     assert 0.074 == pytest.approx( data1ejecta.Ejecta( 7.0 ) )
     assert 0.074 == pytest.approx( data1ejecta.Ejecta( 9.180887372013653 ) )
@@ -109,3 +122,38 @@ def test_Ejecta():
     assert 0.074 == pytest.approx( data1ejecta.Ejecta( 21.604095563139936 ) )
     assert 0.074 == pytest.approx( data1ejecta.Ejecta( 25.194444444444443 ) )
     assert 0.074 == pytest.approx( data1ejecta.Ejecta( 120.0 ) )
+
+
+def test_GetRemnantData():
+    """tests whether the remnant data is read in correctly"""
+    
+    data = SetupTest()
+    
+    RemnantData = data.GetRemnantData()
+    
+    assert -1.0969100130080565 == pytest.approx( RemnantData["Mstar"][0] )
+    assert -0.8804142250382161 == pytest.approx( RemnantData["Mstar"][1] )
+    
+    assert 14.781965892799771 == pytest.approx( RemnantData["t_-1.67"][0] )
+    assert 13.68137744911132 == pytest.approx( RemnantData["t_-1.67"][1] )
+    
+    assert 14.500836618524938 == pytest.approx( RemnantData["t_-0.67"][0] )
+    assert 13.450735279577588 == pytest.approx( RemnantData["t_-0.67"][1] )
+    
+    assert 14.278246979261908 == pytest.approx( RemnantData["t_-0.37"][0] )
+    assert 13.26544876054881 == pytest.approx( RemnantData["t_-0.37"][1] )
+    
+    assert 14.082641523009046 == pytest.approx( RemnantData["t_-0.2"][0] )
+    assert 13.09520930625935 == pytest.approx( RemnantData["t_-0.2"][1] )
+    
+    assert -1.0683387603155188 == pytest.approx( RemnantData["Mfin_-1.67"][0] )
+    assert -0.9051796196452 == pytest.approx( RemnantData["Mfin_-1.67"][1] )
+    
+    assert -1.199145508496439 == pytest.approx( RemnantData["Mfin_-0.67"][0] )
+    assert -1.023741750742955 == pytest.approx( RemnantData["Mfin_-0.67"][1] )
+    
+    assert -1.2547690154718592 == pytest.approx( RemnantData["Mfin_-0.37"][0] )
+    assert -1.073091898294564 == pytest.approx( RemnantData["Mfin_-0.37"][1] )
+    
+    assert -1.2964507017617695 == pytest.approx( RemnantData["Mfin_-0.2"][0] )
+    assert -1.111202932543319 == pytest.approx( RemnantData["Mfin_-0.2"][1] )
