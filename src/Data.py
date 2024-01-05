@@ -1,3 +1,6 @@
+#general modules
+import copy
+
 #own module
 from src.common import IsNumber
 from src.DataReader import cDataReader
@@ -63,7 +66,7 @@ class cData:
         """return a single column from the GC data
         ColumnName: the name of the column from which the data shall be returned"""
         
-        return self.__GCData[ ColumnName ].copy()
+        return copy.deepcopy( self.__GCData[ ColumnName ] )
     
     
     def AddGCData( self, ColumnName, data ):
@@ -74,7 +77,7 @@ class cData:
         if not len( data ) == len( self.__GCData["Name"] ):
             raise ValueError( "cData: Attempt to add Column '" + ColumnName + "' to GCData failed. Length of data does not match!" )
         
-        self.__GCData[ColumnName] = data
+        self.__GCData[ColumnName] = copy.deepcopy( data )
     
     
     def SNExplodes( self, mass ):
@@ -137,4 +140,4 @@ class cData:
     def GetRemnantData( self ):
         """returns a copy of the complete remnant data"""
         
-        return self.__RemnantData.copy()
+        return copy.deepcopy( self.__RemnantData )

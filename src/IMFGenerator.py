@@ -12,11 +12,16 @@ METAL_IN_SUN = 0.0142
 class cIMFGenerator():
     """a class to generate initial mass functions based on a GC's current chemical and orbital properties"""
     
-    def __init__( self, ZH ):
+    def __init__( self, ZH, CutoffMass ):
         """initialises the generator
-        ZH: the metallicity of the GC in dex"""
+        ZH: the metallicity of the GC in dex
+        CutoffMass: the mass lowest mass used to estimate the initial mass loss due to stellar evolution"""
         
         self.__ZH = ZH
+        self.__CutoffMass = CutoffMass
+        self.__beta = 1.91
+        self.__gamma = 0.02
+        self.__x = 0.75
     
     
     def ComputeAlpha( self, Mini ):
@@ -88,13 +93,74 @@ class cIMFGenerator():
         return MF
     
     
-    def ComputeMFFromToday( M, Age, Rperi, Rapo ):
+    def HelperComputeMFFromToday( self, M, Age, Rapo, Rperi, Mini ):
+        """Computes the initial masses of the clusters given in data
+        M: the present day mass [Msun]
+        Age: the age of the cluster [Gyr]
+        Rapo: the apocentre of the clusters orbit [kpc]
+        Rperi: the pericentre of the clusters orbit [kpc]
+        Mini: a guess of the initial mass
+        returns the error resulting from the given initial mass acoording to Baumgardt and Makino's formula"""
+            
+        e = ( Rapo - Rperi ) / ( Rapo + Rperi )
+        
+        Factor = Rapo * ( 1.0 - e )
+        
+        IMF = self.ComputeMF( Mini )
+        
+        N = IMF.GetTotNumbers()
+        
+        p_SF = 1.0 - IMF.GetLostMassPortion( self.__CutoffMass )
+        
+        Err = self.__beta * pow( N / np.log( self.__gamma * N ), self.__x ) * Factor * ( 1.0 - M / ( p_SF * Mini )) / ( Age * 1000.0 ) - 1.0
+        
+        return Err
+    
+    
+    def ComputeIMFFromToday( self, M, Age, Rapo, Rperi ):
         """computes the initial mass function based on todays data
         M: current mass of the GC
         Age: the current age of the GC [Gyr]
         Rperi: the pericentre of the GC [kpc]
         Rapo: the apocentre of the GC [kpc]"""
         
+        #initial guess
+        Mini = 2.0 * M
+        
+        #allowed error
+        epsilon = 1e-6
+        
+        #step width
+        dM = 1e3
+        
+        #iteratively compute Mini
+        for i in range( 100 ):
+            Error = self.HelperComputeMFFromToday( data, nElem, Mini )
+            
+            if abs( Error ) < epsilon:
+                return self.ComputeMF( Mini )
+            
+            Derr = 0.5 * ( HelperComputeMini( data, nElem, Mini + dM ) - HelperComputeMini( data, nElem, Mini - dM )) / dM
+            
+            Mini -= Error / Derr
+            
+        if abs( Error ) > epsilon:
+            warnings.warn( "Warning: cIMFGenerator: ComputeMFFromToday: Mini did not converge!" )
+
+
+    def ComputeCurrentMass( self, Mini, Rapo, Rperi, Age ):
+        """computes the current mass of a GC after the time t
+        Mini: the initial mass of the GC [Msun]
+        ZH: the Metallicity of the GC
+        Rap: the apocenter distance of the GC's orbit [kpc]
+        e: the eccentricity of the GC's orbit
+        t: the time for which the mass is computed [Gyr]"""
+        
         e = ( Rapo - Rperi ) / ( Rapo + Rperi )
         
-        #TODO
+        IMF = self.ComputeMF( Mini )
+        
+        N = IMF.GetTotNumbers()
+        p_SF = 1.0 - IMF.GetLostMassPortion( self.__CutoffMass )
+        
+        return p_SF * Mini * ( 1.0 - ( t * 1000.0 ) / ( self.__beta * Rap * ( 1 - e ) ) * pow( N / np.log( self.__gamma * N ), -self.__x ) )

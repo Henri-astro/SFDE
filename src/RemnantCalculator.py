@@ -1,5 +1,6 @@
 #general modules
 import numpy as np
+import copy
 
 #own modules
 from src.common import IsNumber, LinInterExtrapolate
@@ -10,7 +11,7 @@ class cRemnantCalculator():
     
     def __init__( self, data, ZH ):
         """Constructor
-        data: a lib containing initial masses, development times and remnant masses for stars
+        data: a lib containing initial masses, development times and remnant masses for stars, the masses are expected to be given in accending order
         ZH: the metallicity for which the remnant cRemnantCalculator shall be used"""
         
         #copy the initial masses of the stars
@@ -44,7 +45,7 @@ class cRemnantCalculator():
             ColumnMetal = float( Heading[lenName:] )
             
             if ColumnMetal == ZH:
-                return data[ Heading ].copy()   #if it's the same, no interpolation needed
+                return copy.deepcopy( data[ Heading ] )   #if it's the same, no interpolation needed
             elif ColumnMetal < ZH:
                 if None == Below["ColumnName"] or ColumnMetal > Below["metal"]:
                     Below2 = Below.copy()
@@ -59,13 +60,13 @@ class cRemnantCalculator():
         #cover special cases (no metal above/below known) e.t.c.
         if None == Below["ColumnName"]:
             if None == Above2["ColumnName"]:
-                return data[ Above["ColumnName"] ].copy()
+                return copy.deepcopy( data[ Above["ColumnName"] ] )
             else:
                 Below = Above2.copy()   #interpolation and extrapolation can be done in the same way
                 
         if None == Above["ColumnName"]:
             if None == Below2["ColumnName"]:
-                return data[ Below["ColumnName"] ].copy()
+                return copy.deepcopy( data[ Below["ColumnName"] ] )
             else:
                 Above = Below2.copy()   #interpolation and extrapolation can be done in the same way
                 
@@ -97,21 +98,21 @@ class cRemnantCalculator():
     def GetTimeFromMass( self, mass ):
         """returns the life-expectancy of a star of a given mass
         mass: the mass of the star [Msun]
-        returns the life expectancy of the star [Myr]"""
+        returns the life expectancy of the star [Gyr]"""
         
         logMass = np.log10( mass )
         
         logTimeYr = self.GetValFromList( logMass, self.__Mstar, self.__t )
         
-        return pow( 10.0, logTimeYr - 6.0 )
+        return pow( 10.0, logTimeYr - 9.0 )
     
     
     def GetMassFromTime( self, t ):
         """returns the mass of a star corresponding to the given life-expectancy
-        time: the life-expectancy of the star [Myr]
+        time: the life-expectancy of the star [Gyr]
         returns the mass of the star [Msun]"""
         
-        logTimeYr = np.log10( t ) + 6.0
+        logTimeYr = np.log10( t ) + 9.0
         
         logMass = self.GetValFromList( logTimeYr, self.__t, self.__Mstar )
         
@@ -128,3 +129,27 @@ class cRemnantCalculator():
         logMfin = self.GetValFromList( logMass, self.__Mstar, self.__Mfin )
         
         return pow( 10.0, logMfin )
+
+
+    def GetMfinFromMassFunct( self, MF, time, N = 100 ):
+        """computes the mass left in a cluster of a given mass function after a given time
+        MF: the mass function describing the cluster [cMassFunction]
+        time: the time for which the left-over mass shall be computed [Gyr]
+        N: number of sampling points to be used"""
+        
+        #compute the lowest mass of a star to have died
+        minMass = GetMassFromTime( time )
+        
+        logMinMass = np.log10( minMass )
+        logMaxMass = np.log10( MF.Getbounds[-1] )
+        
+        #compute the current SC mass:
+        CurSCMass = MF.GetMass( MF.Getbounds[0], minMass )  #the stars below minMass contribute with their entire mass
+        
+        Step = ( logMaxMass - logMinMass ) / N
+        
+        for sample in range( N ):
+            MidMass = pow( 10.0, logMinMass + ( sample + 0.5 ) * Step )
+            CurSCMass += MF.GetMass( pow( 10.0, logMinMass + sample * Step ), pow( 10.0, logMinMass + ( sample + 1 ) * Step )  ) * GetMfinFromMass( MidMass ) / MidMass     #the mass enclosed in the step on the MF * the mass portion left after the star dies
+            
+        return CurSCMass

@@ -56,11 +56,11 @@ def test_GetTimeFromMass():
     
     RemCalc = Setup()
     
-    assert pow( 10.0, 3.4 ) == pytest.approx( RemCalc.GetTimeFromMass( 1.0 ) )
-    assert pow( 10.0, 0.25 ) == pytest.approx( RemCalc.GetTimeFromMass( 10.0 ) )
+    assert pow( 10.0, 0.4 ) == pytest.approx( RemCalc.GetTimeFromMass( 1.0 ) )
+    assert pow( 10.0, -2.75 ) == pytest.approx( RemCalc.GetTimeFromMass( 10.0 ) )
     
-    assert 10.0 == pytest.approx( RemCalc.GetMassFromTime( pow( 10.0, 0.25 ) ) )
-    assert 8.5 == pytest.approx( RemCalc.GetMassFromTime( pow( 10.0, 0.47233038399997789002 ) ) )
+    assert 10.0 == pytest.approx( RemCalc.GetMassFromTime( pow( 10.0, -2.75 ) ) )
+    assert 8.5 == pytest.approx( RemCalc.GetMassFromTime( pow( 10.0, 0.47233038399997789002 - 3.0 ) ) )
     
     masses = [8.5, 20.0, 35.5, 40.7, 79.8, 121.0, 134.5 ]
     
