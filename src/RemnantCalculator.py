@@ -119,6 +119,16 @@ class cRemnantCalculator():
         return pow( 10.0, logMass )
     
     
+    def GetMfinFromLogMass( self, logMass ):
+        """computes the mass of stellar remnant from its initial mass
+        mass: the mass of a star log[Msun]
+        returns the mass of the stellar remnant [Msun]"""
+        
+        logMfin = self.GetValFromList( logMass, self.__Mstar, self.__Mfin )
+        
+        return pow( 10.0, logMfin )
+    
+    
     def GetMfinFromMass( self, mass ):
         """computes the mass of stellar remnant from its initial mass
         mass: the mass of a star [Msun]
@@ -126,30 +136,62 @@ class cRemnantCalculator():
         
         logMass = np.log10( mass )
         
-        logMfin = self.GetValFromList( logMass, self.__Mstar, self.__Mfin )
-        
-        return pow( 10.0, logMfin )
+        return self.GetMfinFromLogMass( logMass )
 
 
-    def GetMfinFromMassFunct( self, MF, time, N = 100 ):
+    def GetMfinFromMassFunct( self, MF, time ):
         """computes the mass left in a cluster of a given mass function after a given time
         MF: the mass function describing the cluster [cMassFunction]
         time: the time for which the left-over mass shall be computed [Gyr]
         N: number of sampling points to be used"""
         
         #compute the lowest mass of a star to have died
-        minMass = GetMassFromTime( time )
+        minMass = self.GetMassFromTime( time )
+        
+        if minMass > MF.Getbounds()[-1]:
+            return MF.GetMtot()
         
         logMinMass = np.log10( minMass )
-        logMaxMass = np.log10( MF.Getbounds[-1] )
+        logMaxMass = np.log10( MF.Getbounds()[-1] )
         
         #compute the current SC mass:
-        CurSCMass = MF.GetMass( MF.Getbounds[0], minMass )  #the stars below minMass contribute with their entire mass
+        CurSCMass = MF.GetMass( MF.Getbounds()[0], minMass )  #the stars below minMass contribute with their entire mass
         
-        Step = ( logMaxMass - logMinMass ) / N
+        #for the other stars only the remnant masses contribute
+        MassPart = lambda logLowBound, logHighBound: self.GetMfinFromLogMass( 0.5 * ( logLowBound + logHighBound ) ) * MF.GetMass( pow( 10.0, logLowBound ), pow( 10.0, logHighBound ) )
         
-        for sample in range( N ):
-            MidMass = pow( 10.0, logMinMass + ( sample + 0.5 ) * Step )
-            CurSCMass += MF.GetMass( pow( 10.0, logMinMass + sample * Step ), pow( 10.0, logMinMass + ( sample + 1 ) * Step )  ) * GetMfinFromMass( MidMass ) / MidMass     #the mass enclosed in the step on the MF * the mass portion left after the star dies
+        #boundary cases
+        if logMinMass > self.__Mstar[-1] or logMaxMass < self.__Mstar[0]:
+            CurSCMass += MassPart( logMinMass, logMaxMass ) / MF.GetMtot()
+            return CurSCMass
+        
+        #normal cases
+        Start = 0
+        Finnish = -1
+        
+        for nElem in range( len( self.__Mstar ) ):
+            if logMinMass < self.__Mstar[ nElem ]:
+                Start = nElem
+                break
+            
+        for nElem in range( len( self.__Mstar ) - 1, -1, -1 ):
+            if logMaxMass > self.__Mstar[ nElem ]:
+                Finnish = nElem
+                break
+        
+        if Start == Finnish or Finnish < Start:
+            CurSCMass += MassPart( logMinMass, logMaxMass ) / MF.GetMtot()
+            return CurSCMass
+        
+        CompRemnantMass = 0.0       #add the remnant mass separately first (so I only have to do one division at the end)
+        
+        CompRemnantMass += MassPart( logMinMass, 0.5 * ( self.__Mstar[ Start ] + self.__Mstar[ Start + 1 ] ) )
+        
+        for nElem in range( Start + 1, Finnish ):
+            CompRemnantMass += MassPart( 0.5 * ( self.__Mstar[ nElem - 1 ] + self.__Mstar[ nElem ] ), 0.5 * ( self.__Mstar[ nElem ] + self.__Mstar[ nElem + 1 ] ) )
+            
+        CompRemnantMass += MassPart( 0.5 * ( self.__Mstar[ Finnish - 1 ] + self.__Mstar[ Finnish ] ), logMaxMass )
+        
+        CurSCMass += CompRemnantMass / MF.GetMtot()
             
         return CurSCMass

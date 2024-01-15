@@ -12,13 +12,13 @@ METAL_IN_SUN = 0.0142
 class cIMFGenerator():
     """a class to generate initial mass functions based on a GC's current chemical and orbital properties"""
     
-    def __init__( self, ZH, CutoffMass ):
+    def __init__( self, ZH, RemCalc ):
         """initialises the generator
         ZH: the metallicity of the GC in dex
-        CutoffMass: the mass lowest mass used to estimate the initial mass loss due to stellar evolution"""
+        RemCalc: the remnant calculator to use"""
         
         self.__ZH = ZH
-        self.__CutoffMass = CutoffMass
+        self.__RemCalc = RemCalc
         self.__beta = 1.91
         self.__gamma = 0.02
         self.__x = 0.75
@@ -34,8 +34,8 @@ class cIMFGenerator():
         
         Dalpha = 63
         
-        alpha[0] = 1.3 + Dalpha * ( pow( 10.0, self.__ZH ) - 1 ) * METAL_IN_SUN
-        alpha[1] = 2.3 + Dalpha * ( pow( 10.0, self.__ZH ) - 1 ) * METAL_IN_SUN
+        alpha[0] = 1.3 + Dalpha * ( pow( 10.0, self.__ZH ) - 1.0 ) * METAL_IN_SUN
+        alpha[1] = 2.3 + Dalpha * ( pow( 10.0, self.__ZH ) - 1.0 ) * METAL_IN_SUN
         
         y = -0.14 * self.__ZH + 0.99 * np.log10( ComputeDens( Mini ) * pow( 10.0, -6.0 ) )
         
@@ -110,7 +110,7 @@ class cIMFGenerator():
         
         N = IMF.GetTotNumbers()
         
-        p_SF = 1.0 - IMF.GetLostMassPortion( self.__CutoffMass )
+        p_SF = self.__RemCalc.GetMfinFromMassFunct( IMF, 1.0 ) / IMF.GetMtot()
         
         Err = self.__beta * pow( N / np.log( self.__gamma * N ), self.__x ) * Factor * ( 1.0 - M / ( p_SF * Mini )) / ( Age * 1000.0 ) - 1.0
         
@@ -135,12 +135,13 @@ class cIMFGenerator():
         
         #iteratively compute Mini
         for i in range( 100 ):
-            Error = self.HelperComputeMFFromToday( data, nElem, Mini )
+            
+            Error = self.HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini )
             
             if abs( Error ) < epsilon:
                 return self.ComputeMF( Mini )
             
-            Derr = 0.5 * ( HelperComputeMini( data, nElem, Mini + dM ) - HelperComputeMini( data, nElem, Mini - dM )) / dM
+            Derr = 0.5 * ( self.HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini + dM ) - self.HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini - dM )) / dM
             
             Mini -= Error / Derr
             
@@ -161,6 +162,6 @@ class cIMFGenerator():
         IMF = self.ComputeMF( Mini )
         
         N = IMF.GetTotNumbers()
-        p_SF = 1.0 - IMF.GetLostMassPortion( self.__CutoffMass )
+        p_SF = self.__RemCalc.GetMfinFromMassFunct( IMF, 1.0 ) / IMF.GetMtot()    #1.0 is the time after which the cutoff for initial mass loss happens [Gyr]
         
-        return p_SF * Mini * ( 1.0 - ( t * 1000.0 ) / ( self.__beta * Rap * ( 1 - e ) ) * pow( N / np.log( self.__gamma * N ), -self.__x ) )
+        return p_SF * Mini * ( 1.0 - ( Age * 1000.0 ) / ( self.__beta * Rapo * ( 1 - e ) ) * pow( N / np.log( self.__gamma * N ), -self.__x ) )

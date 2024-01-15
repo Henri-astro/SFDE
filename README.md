@@ -8,11 +8,11 @@ Using a given function of failed SNe and SNe ejecta depending on the stellar mas
 
 ## Usage
 
-Currently SFDE uses 3 input files: one for the properties of the GCs, one to describe which stars explode in a SN and which don't and one file showing the amount of iron ejected by a star depending on its initial stellar mass.
+Currently SFDE uses 4 input files: one for the properties of the GCs, one to describe which stars explode in a SN and which don't, one file showing the amount of iron ejected by a star depending on its initial stellar mass and one file showing the remnant masses depending on the initial masses.
 It is called taking the paths to these 3 files and a path to the output folder as input parameters:
 
 ```
-python main.py <GC_property_file> <SN_file> <Ejecta_file> <output_folder>
+python main.py <GC_property_file> <SN_file> <Ejecta_file> <Remnant_file> <output_folder>
 ```
 
 The output folder may not exist at the time of calling the script.
@@ -32,7 +32,7 @@ The GC property file contains the following GC parameters:
 | present-day cluster Mass     | Msun | Mass         |
 | Apocentre                    | kpc  | R_a          |
 | Pericentre                   | kpc  | R_p          |
-| Star formation efficiency    |      | SFE          |
+| Star formation efficiency    | -    | SFE          |
 | [Fe/H]                       | dex  | Fe-H         |
 | iron spread                  | dex  | FeSpread     |
 | cluster age                  | Gyr  | Age          |
@@ -59,3 +59,16 @@ A file containing the amount of iron ejected by a SN depending on the initial st
 | amount of iron ejected  | Msun | Fe[Msun]     |
 
 The program interpolates between the stellar masses.
+
+### The remnant file
+
+A file containing the life times and remnant masses of stars for different initial masses and metallicities.
+
+| Quantity                | Unit          | Name in File | Comment                      |
+| :---------------------- | :------------ | :----------- | :--------------------------- |
+| stellar mass            | log10( Msun ) | Mstar        |                              |
+| life time of the star   | log10( yr )   | t_x          | x can be any value for [Z/H] |
+| remant mass             | log10( Msun ) | Mfin_x       | x can be any value for [Z/H] |
+
+Any number of columns for the life time and remnant masses can exist in this file for different metallicities.
+To find the best values for a given star the program will inter- and extrapolate using the given metallicities and initial stellar masses.

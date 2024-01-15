@@ -66,6 +66,18 @@ def test_AccessGCData():
     assert 12.0 == pytest.approx( data.AccessGCData( "Age" )[1] )
 
 
+def test_AccessGCDataPrinteable():
+    """checks that the GC data is displayed correctly in printeable form"""
+    
+    data = SetupTest()
+    
+    ResultString = "Name       Mass        R_a      R_p     SFE    Fe-H      FeSpread                Age     \n"\
+                 + "47_Tuc     807000.0    7.44     5.47    0.3    -0.747    0.033                   12.0    \n"\
+                 + "NGC_288    98400.0     12.26    2.01    0.3    -1.226    0.037000000000000005    12.0    "
+    
+    assert ResultString == data.AccessGCDataPrinteable()
+
+
 def test_AddGCData():
     """tests adding data to the GC dataset"""
     

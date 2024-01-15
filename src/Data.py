@@ -69,6 +69,40 @@ class cData:
         return copy.deepcopy( self.__GCData[ ColumnName ] )
     
     
+    def AccessGCDataPrinteable( self ):
+        """returns a string of the GC data for printing"""
+        
+        Header = ""
+        lines = [ "" for Elem in self.__GCData["Name"] ]
+        
+        for Name in self.__GCData:
+            if not type(self.__GCData[ Name ][0]  ) in [ str, int, float ]:
+                continue
+            
+            #find maximum length
+            length = len( str( Name ) )
+            for Elem in self.__GCData[ Name ]:
+                newlen = len( str( Elem ) )
+                
+                if newlen > length:
+                    length = newlen
+            
+            length += 4
+            
+            Header += Name.ljust(length)
+            
+            for nElem in range( len( self.__GCData[ Name ] ) ):
+                lines[nElem] += str( self.__GCData[ Name ][nElem] ).ljust( length )
+                
+        ReturnString = Header
+        
+        for line in lines:
+            ReturnString += "\n"
+            ReturnString += line
+            
+        return ReturnString
+    
+    
     def AddGCData( self, ColumnName, data ):
         """adds a single column to the GCdata
         ColumnName: the name of the column to be added
