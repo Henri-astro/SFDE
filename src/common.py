@@ -1,3 +1,6 @@
+pIronSun = 0.0013
+
+
 def IsNumber( str ):
     """checks, whether a string is a floating point number
     str: the string to check

@@ -54,6 +54,12 @@ def test_GetterValueErrors():
         
     with pytest.raises( ValueError, match = "massfunction: GetAlpha: index out of bounds!" ):
         MF.GetAlpha( 3 )
+        
+    with pytest.raises( ValueError, match = "massfunction: GetK: index out of bounds!" ):
+        MF.GetK( -1 )
+        
+    with pytest.raises( ValueError, match = "massfunction: GetK: index out of bounds!" ):
+        MF.GetK( 3 )
 
 
 def test_ComputeKs():
@@ -68,17 +74,22 @@ def test_ComputeKs():
     
     assert len( MF.Getks() ) == 1
     assert pytest.approx( MF.Getks()[0] ) == 1.0 / 0.92
+    assert pytest.approx( MF.GetK( 0 ) ) == 1.0 / 0.92
     
     MF = cMassFunction( 3.0, [0.08, 1.0, 2.0], [1.0, 2.0] )
     
     assert len( MF.Getks() ) == 2
     assert pytest.approx( MF.Getks()[1] ) == MF.Getks()[0]
     assert pytest.approx( MF.Getks()[0] ) == 1.0 / ( 0.92 + np.log( 2.0 ) )
+    assert pytest.approx( MF.GetK( 0 ) ) == MF.Getks()[0]
+    assert pytest.approx( MF.GetK( 1 ) ) == MF.Getks()[1]
     
     MF = cMassFunction( 2.0, [0.08, 0.5, 1.0], [1.3, 2.3] )
     
     assert pytest.approx( MF.Getks()[0] ) == 1.0 / 1.02081201235762066279
     assert pytest.approx( MF.Getks()[1] ) == 0.5 / 1.02081201235762066279
+    assert pytest.approx( MF.GetK( 0 ) ) == MF.Getks()[0]
+    assert pytest.approx( MF.GetK( 1 ) ) == MF.Getks()[1]
     
 
 def test_GetFunctionValue():
@@ -166,3 +177,55 @@ def test_GetMass():
     assert pytest.approx( MF.GetMassPortion( 0.08, 2.0 ) ) == 1.0
     assert pytest.approx( MF.GetMassPortion( 0.08, 3.0 ) ) == 1.0
     assert pytest.approx( MF.GetMassPortion( 0.08, 1.0 ) ) == 1.0 / ( 0.92 + np.log( 2.0 ) ) * 0.92 / Mini
+
+
+def test_GetMassStarMinX():
+    """checks that the mass of a star X below the given one is computed correctly"""
+    
+    Mini = 2.0
+    bounds = [0.08, 1.0]
+    alphas = [1.0]
+    
+    MF = cMassFunction( Mini, bounds, alphas )
+    
+    Masses = [ 0.1 * i for i in range( 1,10 ) ]
+    
+    for mass1 in Masses:
+        for mass2 in Masses:
+            if not mass2 > mass1:
+                break
+    
+            Num = MF.GetNumbers( mass1, mass2 )
+            
+            assert mass1 == pytest.approx( MF.GetMassStarMinX( mass2, Num ) )
+    
+    alphas2 = [2.0]
+    
+    MF2 = cMassFunction( Mini, bounds, alphas )
+    
+    for mass1 in Masses:
+        for mass2 in Masses:
+            if not mass2 > mass1:
+                break
+    
+            Num = MF2.GetNumbers( mass1, mass2 )
+            
+            assert mass1 == pytest.approx( MF2.GetMassStarMinX( mass2, Num ) )
+            
+    Mini3 = 1000.0
+    bounds3 = [0.08,0.5,100.0]
+    alphas3 = [1.3,2.3]
+    
+    MF3 = cMassFunction( Mini3, bounds3, alphas3 )
+    
+    Masses3 = [ 1.1 * i for i in range(1,90) ]
+    
+    for mass1 in Masses3:
+        for mass2 in Masses3:
+            if not mass2 > mass1:
+                break
+    
+            Num = MF3.GetNumbers( mass1, mass2 )
+            
+            assert mass1 == pytest.approx( MF3.GetMassStarMinX( mass2, Num ) )
+    

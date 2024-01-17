@@ -9,10 +9,21 @@ from src.BaseSCCalc import ComputeDens
 from src.RemnantCalculator import cRemnantCalculator
 
 
+def SetupRemCalc( ZH ):
+    """sets up a remnand calculator with the desired metallicity
+    ZH: the metallicity to use"""
+    
+    #initialize the remnant calculator
+    data = { "Mstar": [0.0,1.0,2.0], "t_-1.0": [9.0,6.0,3.0], "t_0.0": [9.0,6.5,3.2], "Mfin_-1.0": [0.5,0.8,1.2], "Mfin_0.0":[0.4,0.9,1.5] }
+    RemCalc = cRemnantCalculator( data, ZH )
+    
+    return RemCalc
+
+
 def test_ComputeAlpha():
     """tests the compute alpha function"""
     
-    IMFGen = cIMFGenerator( 0.0, 20.0 )
+    IMFGen = cIMFGenerator( SetupRemCalc( 0.0 ) )
     
     alpha = IMFGen.ComputeAlpha( 1e4 )
     
@@ -29,7 +40,7 @@ def test_ComputeAlpha():
     assert 2.293133 == pytest.approx( alpha[2] )
     
     
-    IMFGen = cIMFGenerator( -2.0, 20.0 )
+    IMFGen = cIMFGenerator( SetupRemCalc( -2.0 ) )
     
     alpha = IMFGen.ComputeAlpha( 1e5 )
     
@@ -43,7 +54,7 @@ def test_CheckUpperEnd():
     """tests the CheckUpperEnd function"""
     
     MF = cMassFunction( 100.0, [0.08,150.0], [1.3] )
-    IMFGen = cIMFGenerator( 0.0, 20.0 )
+    IMFGen = cIMFGenerator( SetupRemCalc( 0.0 ) )
     
     assert -1.0 == pytest.approx( IMFGen.CheckUpperEnd( MF ))
     
@@ -67,7 +78,7 @@ def test_ComputeMF():
     ZH = -2.0
     Mini = 1e5
     
-    IMFGen = cIMFGenerator( ZH, 20.0 )
+    IMFGen = cIMFGenerator( SetupRemCalc( ZH ) )
     
     MF = IMFGen.ComputeMF( Mini )
     
@@ -104,7 +115,7 @@ def test_ComputeIMFFromToday():
     RemCalc = cRemnantCalculator( data, ZH )
     
     #compute the present-day mass for that GC
-    IMFGen = cIMFGenerator( ZH, RemCalc )
+    IMFGen = cIMFGenerator( RemCalc )
     M = IMFGen.ComputeCurrentMass( Mini, Rapo, Rperi, t )
     
     assert M < Mini
@@ -121,7 +132,7 @@ def test_ComputeIMFFromToday():
     RemCalc2 = cRemnantCalculator( data, ZH2 )
     
     #compute the present-day mass for that GC
-    IMFGen2 = cIMFGenerator( ZH2, RemCalc2 )
+    IMFGen2 = cIMFGenerator( RemCalc2 )
     M2 = IMFGen2.ComputeCurrentMass( Mini2, Rapo, Rperi, t )
     
     #do the calculations
@@ -148,7 +159,7 @@ def test_ComputeIMFFromToday():
     RemCalc3 = cRemnantCalculator( data2, ZH3 )
     
     #compute the present-day mass for that GC
-    IMFGen3 = cIMFGenerator( ZH3, RemCalc3 )
+    IMFGen3 = cIMFGenerator( RemCalc3 )
     M3 = IMFGen3.ComputeCurrentMass( Mini3, Rapo3, Rperi3, t )
     
     #do the calculations

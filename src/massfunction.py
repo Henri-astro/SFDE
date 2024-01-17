@@ -108,6 +108,18 @@ class cMassFunction:
         return self.__alphas[Index]
     
     
+    def GetK( self, Index ):
+        """gets the stored k for the given index
+        self: the "this" equivalent
+        Index: the index at which k shall be found
+        throws a ValueError if the index is out of bounds"""
+        
+        if Index >= len( self.__ks ) or 0 > Index:
+            raise ValueError( "massfunction: GetK: index out of bounds!" )
+        
+        return self.__ks[Index]
+    
+    
     def ComputeIntegral( self, mass1, mass2, summand = 0 ):
         """computes the integral of the IMF adding summand to -alpha int limits_mass1^mass2 k_i m^{summand-alpha_i}
         mass1: the low-mass end of the mass interval to be investigated (the interval is truncated when outside of the boundaries of the MF)
@@ -157,7 +169,7 @@ class cMassFunction:
         if mass2 >= self.__bounds[-1]:
             maxMass = True
     
-        Number = self.ComputeIntegral( mass1, mass2, 1 )
+        Number = self.ComputeIntegral( mass1, mass2 )
         
         if maxMass:
             return Number + 1
@@ -196,3 +208,31 @@ class cMassFunction:
         mass2: the high-mass end of the mass interval to be investigated"""
         
         return self.GetMass( mass1, mass2 ) / self.__Mtot
+    
+    
+    def GetMassStarMinX( self, mass, NumStars ):
+        """returns the mass of teh Xth less massive star than a star of a given mass assuming optimal sampling
+        mass: the mass of the given star
+        NumStars: the number of stars to the next one, can be float"""
+        
+        #check the outer boundaries
+        if mass > self.__bounds[-1] or mass < self.__bounds[0]:
+            raise ValueError( "massfunction: GetMassStarMinX: mass out of bounds!" )
+        
+        #check how much above the last boundary the star is
+        AlphaIndex = 0          #the index of the alpha used
+        
+        for nBound in range( len( self.__bounds ) - 1 ):
+            if mass <= self.__bounds[ nBound + 1 ]:
+                AlphaIndex = nBound
+                break
+        
+        MassToBound = self.GetMass( self.__bounds[AlphaIndex], mass )
+        
+        if MassToBound < NumStars:
+            return self.GetMassStarMinX( self.__bounds[AlphaIndex], NumStars - MassToBound )
+        
+        if self.__alphas[ AlphaIndex ] == 1.0:
+            return np.exp( np.log( mass ) - NumStars / self.__ks[ AlphaIndex ] )
+        else:
+            return pow( pow( mass, 1.0 - self.__alphas[ AlphaIndex ] ) - NumStars * ( 1.0 - self.__alphas[ AlphaIndex ] ) / self.__ks[ AlphaIndex ], 1.0 / ( 1.0 - self.__alphas[ AlphaIndex ] ) )

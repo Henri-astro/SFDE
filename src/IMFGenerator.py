@@ -12,12 +12,11 @@ METAL_IN_SUN = 0.0142
 class cIMFGenerator():
     """a class to generate initial mass functions based on a GC's current chemical and orbital properties"""
     
-    def __init__( self, ZH, RemCalc ):
+    def __init__( self, RemCalc ):
         """initialises the generator
-        ZH: the metallicity of the GC in dex
-        RemCalc: the remnant calculator to use"""
+        RemCalc: the remnant calculator to use (also contains the metallicity used"""
         
-        self.__ZH = ZH
+        self.__ZH = RemCalc.GetZH()
         self.__RemCalc = RemCalc
         self.__beta = 1.91
         self.__gamma = 0.02
@@ -121,8 +120,8 @@ class cIMFGenerator():
         """computes the initial mass function based on todays data
         M: current mass of the GC
         Age: the current age of the GC [Gyr]
-        Rperi: the pericentre of the GC [kpc]
-        Rapo: the apocentre of the GC [kpc]"""
+        Rapo: the apocentre of the GC [kpc]
+        Rperi: the pericentre of the GC [kpc]"""
         
         #initial guess
         Mini = 2.0 * M

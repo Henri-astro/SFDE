@@ -14,10 +14,16 @@ class cRemnantCalculator():
         data: a lib containing initial masses, development times and remnant masses for stars, the masses are expected to be given in accending order
         ZH: the metallicity for which the remnant cRemnantCalculator shall be used"""
         
+        self.__ZH = ZH
+        
         #copy the initial masses of the stars
         self.__Mstar = data["Mstar"]
         self.__t = self.FindValues( data, ZH, "t_" )
         self.__Mfin = self.FindValues( data, ZH, "Mfin_" )
+        
+        
+    def GetZH( self ):
+        return self.__ZH
     
     
     def FindValues( self, data, ZH, Name ):

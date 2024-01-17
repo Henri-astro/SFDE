@@ -1,5 +1,6 @@
 #general modules
 import copy
+import numpy as np
 
 #own module
 from src.common import IsNumber
@@ -76,7 +77,7 @@ class cData:
         lines = [ "" for Elem in self.__GCData["Name"] ]
         
         for Name in self.__GCData:
-            if not type(self.__GCData[ Name ][0]  ) in [ str, int, float ]:
+            if not type(self.__GCData[ Name ][0]  ) in [ str, int, float, np.float64 ]:
                 continue
             
             #find maximum length
@@ -136,7 +137,8 @@ class cData:
     
     def Ejecta( self, mass ):
         """returns the amount of iron produced by a star of the given mass. This function assumes all stars explode.
-        mass: the mass of the star"""
+        mass: the mass of the star
+        returns the amount of iron produced [Msun]"""
         
         #if only one value is known return this one value
         if 1 == len( self.__EjectaData["mass[Msun]"] ):
