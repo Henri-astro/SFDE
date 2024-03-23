@@ -18,7 +18,7 @@ class cDataReader:
         FileName: the file that contains the data"""
         
         #read in the data
-        self.__datasheet = pd.read_table( FileName, sep='\\s+' )
+        self.__datasheet = pd.read_table( FileName, sep='\\s+', comment='#' )
         
         #check that all columns are present        
         header = self.__datasheet.columns.values.tolist()

@@ -227,10 +227,10 @@ class cMassFunction:
                 AlphaIndex = nBound
                 break
         
-        MassToBound = self.GetMass( self.__bounds[AlphaIndex], mass )
+        NumToBound = self.GetNumbers( self.__bounds[AlphaIndex], mass )
         
-        if MassToBound < NumStars:
-            return self.GetMassStarMinX( self.__bounds[AlphaIndex], NumStars - MassToBound )
+        if NumToBound < NumStars:
+            return self.GetMassStarMinX( self.__bounds[AlphaIndex], NumStars - NumToBound )
         
         if self.__alphas[ AlphaIndex ] == 1.0:
             return np.exp( np.log( mass ) - NumStars / self.__ks[ AlphaIndex ] )

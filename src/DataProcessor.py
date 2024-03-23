@@ -93,7 +93,7 @@ class cDataProcessor():
             while ProducedIron > 0.0:
                 nextMass = StarExtractor.GetNextMostMassiveStar()
                 
-                if nextMass < 9.0:
+                if nextMass < 8.0:
                     mlast = float( "NaN" )
                     NSN = float( "NaN" )
                     break

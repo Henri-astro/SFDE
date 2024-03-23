@@ -55,7 +55,7 @@ class cDataWriter():
         
         # create the colour scheme
         nSamples = 550
-        mmin = 9.0
+        mmin = 8.0
         
         plt.figure( figsize = [3.5,1.5], dpi = 200)
         plt.rcParams.update({'font.size': 8})
@@ -84,7 +84,7 @@ class cDataWriter():
             plt.xscale( "log" )
             
             plt.xlabel( "$m [M_\\odot]$" )
-            plt.text( mlasts[nSC], 1.05, "$t_{SF} = " + "{:.1f}".format( SFDs[nSC] * 1000.0 ) + "$ Myr", ha = "center" )
+            plt.text( max( 11.0, mlasts[nSC] ), 1.05, "$t_{SF} = " + "{:.1f}".format( SFDs[nSC] * 1000.0 ) + "$ Myr", ha = "center" )
             
             plt.gca().axes.get_yaxis().set_visible(False)
             

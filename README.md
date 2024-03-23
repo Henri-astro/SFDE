@@ -21,6 +21,8 @@ All parameters in the input files are organised on columns.
 The order of these columns is not relevant, however, each column should have the correct column header.
 The column headers and expected input units are listed in the tables below.
 The columns are seperated by spaces.
+'#' is used to indicate comments.
+Everything after this symbol to the end of the line will not be parsed.
 
 ### The GC property file
 
@@ -72,3 +74,21 @@ A file containing the life times and remnant masses of stars for different initi
 
 Any number of columns for the life time and remnant masses can exist in this file for different metallicities.
 To find the best values for a given star the program will inter- and extrapolate using the given metallicities and initial stellar masses.
+
+## Output
+
+All output is stored in the specified output folder.
+This folder is expected to be non-existend and is created by the program itself.
+The program outputs a file with the GC properties.
+This contains all the GC properties that were read in and additionally the following:
+
+| Quantity                                        | Unit | Name in File |
+| :---------------------------------------------- | :--- | :----------- |
+| the total mass of iron produced before SF ends  | Msun | ProducedIron |
+| number of SN exploding before SF ends           |      | NSN          |
+| mass of the last star to explode before SF ends | Msun | mlast        |
+| star formation duration                         | Gyr  | SFD          |
+
+Additionally the program creates a barcode plot for each cluster that produces enough SNe to generate its observed iron spread.
+These plots are generated in the subfolder 'Barcodes'.
+The files are named after the cluster names.

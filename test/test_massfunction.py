@@ -229,3 +229,11 @@ def test_GetMassStarMinX():
             
             assert mass1 == pytest.approx( MF3.GetMassStarMinX( mass2, Num ) )
     
+    #that case that didn't want to work
+    Mini4 = 1000.0
+    bounds4 = [0.3,0.5,0.7]
+    alphas4 = [1.3,2.3]
+    
+    MF4 = cMassFunction( Mini4, bounds4, alphas4 )
+    
+    assert 0.301058871413287 == pytest.approx( MF4.GetMassStarMinX( 0.7, 2188.800573307484 ))
