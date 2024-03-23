@@ -1,6 +1,5 @@
 #general modules
 import numpy as np
-import copy
 
 #own modules
 from src.common import IsNumber, LinInterExtrapolate
@@ -51,7 +50,7 @@ class cRemnantCalculator():
             ColumnMetal = float( Heading[lenName:] )
             
             if ColumnMetal == ZH:
-                return copy.deepcopy( data[ Heading ] )   #if it's the same, no interpolation needed
+                return data[ Heading ]   #if it's the same, no interpolation needed
             elif ColumnMetal < ZH:
                 if None == Below["ColumnName"] or ColumnMetal > Below["metal"]:
                     Below2 = Below.copy()
@@ -66,13 +65,13 @@ class cRemnantCalculator():
         #cover special cases (no metal above/below known) e.t.c.
         if None == Below["ColumnName"]:
             if None == Above2["ColumnName"]:
-                return copy.deepcopy( data[ Above["ColumnName"] ] )
+                return data[ Above["ColumnName"] ]
             else:
                 Below = Above2.copy()   #interpolation and extrapolation can be done in the same way
                 
         if None == Above["ColumnName"]:
             if None == Below2["ColumnName"]:
-                return copy.deepcopy( data[ Below["ColumnName"] ] )
+                return data[ Below["ColumnName"] ]
             else:
                 Above = Below2.copy()   #interpolation and extrapolation can be done in the same way
                 

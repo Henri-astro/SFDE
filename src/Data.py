@@ -1,5 +1,4 @@
 #general modules
-import copy
 import numpy as np
 
 #own module
@@ -67,7 +66,7 @@ class cData:
         """return a single column from the GC data
         ColumnName: the name of the column from which the data shall be returned"""
         
-        return copy.deepcopy( self.__GCData[ ColumnName ] )
+        return self.__GCData[ ColumnName ]
     
     
     def AccessGCDataPrinteable( self ):
@@ -107,12 +106,12 @@ class cData:
     def AddGCData( self, ColumnName, data ):
         """adds a single column to the GCdata
         ColumnName: the name of the column to be added
-        data: a list of the data to be added, the length of the list needs to match the length of the other columns"""
+        data: a tuple of the data to be added, the length of the tuple needs to match the length of the other columns"""
         
         if not len( data ) == len( self.__GCData["Name"] ):
             raise ValueError( "cData: Attempt to add Column '" + ColumnName + "' to GCData failed. Length of data does not match!" )
         
-        self.__GCData[ColumnName] = copy.deepcopy( data )
+        self.__GCData[ColumnName] = tuple( data )
     
     
     def SNExplodes( self, mass ):
@@ -176,4 +175,4 @@ class cData:
     def GetRemnantData( self ):
         """returns a copy of the complete remnant data"""
         
-        return copy.deepcopy( self.__RemnantData )
+        return self.__RemnantData.copy()

@@ -1,3 +1,4 @@
+#general libs
 import pandas as pd
 
 
@@ -37,4 +38,4 @@ class cDataReader:
     def GetData( self ):
         """returns the data in form of a plain python list"""
         
-        return { header: list( self.__datasheet[header] ) for header in self.__datasheet.columns.values.tolist() }
+        return { header: tuple( self.__datasheet[header] ) for header in self.__datasheet.columns.values.tolist() }

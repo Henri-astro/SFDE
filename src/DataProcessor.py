@@ -19,12 +19,12 @@ class cDataProcessor():
         """performs the data processing on the data
         data: the data to work on"""
         
-        self.ComputeIMF( data )
-        self.ComputeIron( data )
-        self.ComputeSNe( data )
+        self.__ComputeIMF( data )
+        self.__ComputeIron( data )
+        self.__ComputeSNe( data )
     
     
-    def ComputeIMF( self, data ):
+    def __ComputeIMF( self, data ):
         """computes all the IMF's and initial masses
         data: the data to work on
         This function adds the columns 'IMF' and 'Mini' to the data"""
@@ -48,7 +48,7 @@ class cDataProcessor():
         data.AddGCData( "Mini", [ IMF.GetMtot() for IMF in IMFs ] )
     
     
-    def ComputeIron( self, data ):
+    def __ComputeIron( self, data ):
         """computes the amount of iron to be produced
         data: the data to work on
         adds the column 'ProducedIron' to the data"""
@@ -66,7 +66,7 @@ class cDataProcessor():
         data.AddGCData( "ProducedIron", ProducedIron )
         
         
-    def ComputeSNe( self, data ):
+    def __ComputeSNe( self, data ):
         """computes the number of Sne and the time star formation lasts
         data: the data to work on
         adds the columns 'NSN','mlast' and 'SFD'"""
