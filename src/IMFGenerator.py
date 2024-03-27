@@ -92,7 +92,7 @@ class cIMFGenerator():
         return MF
     
     
-    def HelperComputeMFFromToday( self, M, Age, Rapo, Rperi, Mini ):
+    def __HelperComputeMFFromToday( self, M, Age, Rapo, Rperi, Mini ):
         """Computes the initial masses of the clusters given in data
         M: the present day mass [Msun]
         Age: the age of the cluster [Gyr]
@@ -135,12 +135,12 @@ class cIMFGenerator():
         #iteratively compute Mini
         for i in range( 100 ):
             
-            Error = self.HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini )
+            Error = self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini )
             
             if abs( Error ) < epsilon:
                 return self.ComputeMF( Mini )
             
-            Derr = 0.5 * ( self.HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini + dM ) - self.HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini - dM )) / dM
+            Derr = 0.5 * ( self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini + dM ) - self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini - dM )) / dM
             
             Mini -= Error / Derr
             

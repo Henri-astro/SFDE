@@ -24,10 +24,10 @@ class cMassFunction:
         self.__Mtot = Mtot
         
         #compute the k-values for the mass function
-        self.ComputeKs()
+        self.__ComputeKs()
         
         
-    def ComputeKs( self ):
+    def __ComputeKs( self ):
         """compute the k values from the given masses and alphas"""
         
         #compute preliminary k's

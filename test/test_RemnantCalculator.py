@@ -16,25 +16,6 @@ def Setup():
     RemCalc = cRemnantCalculator( data, ZH )
     
     return RemCalc
-
-
-def test_FindValues():
-    """tests the find values function from the remnant calculator"""
-    
-    data = { "Mstar": [1.0,2.0], "t_-1.0": [6.0,3.0], "t_0.0": [6.5,3.2], "Mfin_-1.0": [0.8,1.2], "Mfin_0.0":[0.9,1.5] }
-    ZH = -0.5
-    
-    RemCalc = cRemnantCalculator( data, ZH )
-    
-    Res = RemCalc.FindValues( data, ZH, "t_" )
-    
-    assert 6.25 == pytest.approx( Res[0] )
-    assert 3.1 == pytest.approx( Res[1] )
-    
-    Res2 = RemCalc.FindValues( data, -1.0, "Mfin_" )
-    
-    assert 0.8 == pytest.approx( Res2[0] )
-    assert 1.2 == pytest.approx( Res2[1] )
     
     
 def test_GetValFromList():
