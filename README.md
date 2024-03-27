@@ -68,9 +68,9 @@ A file containing the life times and remnant masses of stars for different initi
 
 | Quantity                | Unit          | Name in File | Comment                      |
 | :---------------------- | :------------ | :----------- | :--------------------------- |
-| stellar mass            | log10( Msun ) | Mstar        |                              |
+| stellar mass            | Msun          | mass[Msun]   |                              |
 | life time of the star   | log10( yr )   | t_x          | x can be any value for [Z/H] |
-| remant mass             | log10( Msun ) | Mfin_x       | x can be any value for [Z/H] |
+| remant mass             | Msun          | Mfin_x       | x can be any value for [Z/H] |
 
 Any number of columns for the life time and remnant masses can exist in this file for different metallicities.
 To find the best values for a given star the program will inter- and extrapolate using the given metallicities and initial stellar masses.

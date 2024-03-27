@@ -63,7 +63,7 @@ def test_ComputeIMF():
                     "FeSpread": (0.05, 0.1),\
                     "SFE": (0.3, 0.3)}
     
-    RemnantReader = cDataReader( "test/mockdata/RemnantData.dat", ["Mstar"] )
+    RemnantReader = cDataReader( "test/mockdata/RemnantData.dat", ["mass[Msun]"] )
     data.SetRemnantData( RemnantReader.GetData() )
     
     compareData["Mass"] = []

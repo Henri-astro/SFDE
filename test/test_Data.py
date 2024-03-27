@@ -143,8 +143,8 @@ def test_GetRemnantData():
     
     RemnantData = data.GetRemnantData()
     
-    assert -1.0969100130080565 == pytest.approx( RemnantData["Mstar"][0] )
-    assert -0.8804142250382161 == pytest.approx( RemnantData["Mstar"][1] )
+    assert -1.0969100130080565 == pytest.approx( RemnantData["mass[Msun]"][0] )
+    assert -0.8804142250382161 == pytest.approx( RemnantData["mass[Msun]"][1] )
     
     assert 14.781965892799771 == pytest.approx( RemnantData["t_-1.67"][0] )
     assert 13.68137744911132 == pytest.approx( RemnantData["t_-1.67"][1] )

@@ -10,7 +10,7 @@ from src.massfunction import cMassFunction
 def Setup():
     """instantiates a standart version of the class for testing"""
     
-    data = { "Mstar": [1.0,2.0], "t_-1.0": [6.0,3.0], "t_0.0": [6.5,3.2], "Mfin_-1.0": [0.8,1.2], "Mfin_0.0":[0.9,1.5] }
+    data = { "mass[Msun]": [1.0,2.0], "t_-1.0": [6.0,3.0], "t_0.0": [6.5,3.2], "Mfin_-1.0": [0.8,1.2], "Mfin_0.0":[0.9,1.5] }
     ZH = -0.5
     
     RemCalc = cRemnantCalculator( data, ZH )
@@ -66,7 +66,7 @@ def test_GetMfinFromMass():
 def test_GetMfinFromMassFunct():
     """tests that the left-over mass is computed correctly"""
     
-    data = { "Mstar": [0.5,1.0,2.0], "t_-1.0": [8.0,6.0,3.0], "t_0.0": [8.0,6.5,3.2], "Mfin_-1.0": [0.5,0.8,1.2], "Mfin_0.0":[0.4,0.9,1.5] }
+    data = { "mass[Msun]": [0.5,1.0,2.0], "t_-1.0": [8.0,6.0,3.0], "t_0.0": [8.0,6.5,3.2], "Mfin_-1.0": [0.5,0.8,1.2], "Mfin_0.0":[0.4,0.9,1.5] }
     ZH = -0.5
     
     RemCalc = cRemnantCalculator( data, ZH )

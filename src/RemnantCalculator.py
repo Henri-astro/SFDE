@@ -16,7 +16,7 @@ class cRemnantCalculator():
         self.__ZH = ZH
         
         #copy the initial masses of the stars
-        self.__Mstar = data["Mstar"]
+        self.__Mstar = data["mass[Msun]"]
         self.__t = self.__FindValues( data, ZH, "t_" )
         self.__Mfin = self.__FindValues( data, ZH, "Mfin_" )
     

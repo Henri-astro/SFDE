@@ -35,7 +35,7 @@ class cData:
         if 0 == len( self.__EjectaData["mass[Msun]"] ):
             raise ValueError( "cData: Empty Ejecta data. Please check your Ejecta file." )
         
-        RemnantData = cDataReader( RemnantFile, ["Mstar"] )
+        RemnantData = cDataReader( RemnantFile, ["mass[Msun]"] )
         self.__RemnantData = RemnantData.GetData()
         
         #check that at least one column with t and Mfin is present
@@ -58,8 +58,15 @@ class cData:
             raise ValueError( "cData: final masses in Remnant data missing. Please check your Remnant file." )
         
         #make sure the data is not empty
-        if 0 == len( self.__RemnantData["Mstar"] ):
+        if 0 == len( self.__RemnantData["mass[Msun]"] ):
             raise ValueError( "cData: Empty Remnant data. Please check your Remnant file." )
+        
+        #change all the initial and remnant masses into their logarithms
+        self.__RemnantData["mass[Msun]"] = tuple( np.log10( logmass ) for logmass in self.__RemnantData["mass[Msun]"] )
+        
+        for Elem in self.__RemnantData:
+            if Elem[:5] == "Mfin_":
+                self.__RemnantData[Elem] = tuple( np.log10( logmass ) for logmass in self.__RemnantData[Elem] )
         
         
     def AccessGCData( self, ColumnName ):
