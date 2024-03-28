@@ -79,26 +79,77 @@ class cRemnantCalculator():
         return self.__ZH
     
 
-    def GetValFromList( self, val, valList, dataList ):
+    def __GetValFromList( self, val, valList, dataList ):
         """searches for the value corresponding to a given value in a given valueList and returns the corresponding value from the dataList (treating it as a function data( val ))
         val: the mass of a star for which a property shall be found [log(Msun)]
+        valList: a list of possible values sorted from smallest to largest
         dataList: the list to retrieve the value from
         returns the value corresponding to the given mass, the mass cannot be found exactly it is interpolated/extrapolated"""
         
         #make sure to handle masses smaller than the smallest element correctly
-        if val < valList[0]:
+        if val < valList[1]:
             return LinInterExtrapolate( ( valList[0], dataList[0] ),( valList[1], dataList[1] ), val )
         
         #make sure to handle masses larger than the largest element correctly
-        if val > valList[-1]:
+        if val > valList[-2]:
             return LinInterExtrapolate( ( valList[-1], dataList[-1] ),( valList[-2], dataList[-2] ), val )
         
-        for nElem in range( len( valList ) ):
-            if val == valList[nElem]:
-                return dataList[nElem]
-            elif val < valList[nElem]:
-                return LinInterExtrapolate( ( valList[nElem-1], dataList[nElem-1] ), ( valList[nElem], dataList[nElem] ), val )
-            
+        lenValList = len( valList )
+        pos = int( lenValList / 2 )
+        
+        for i in range( int( np.log2( pos ) ) + 1 ):
+            if val == valList[pos]:
+                return dataList[pos]
+            elif valList[pos] < val:
+                if valList[pos + 1] > val:
+                    break
+                else:
+                    pos += int( lenValList / pow( 2, i + 2 ))
+            else:
+                if valList[pos - 1] < val:
+                    pos = pos - 1
+                    break
+                else:
+                    pos -= int( lenValList / pow( 2, i + 2 ))
+        
+        return LinInterExtrapolate( ( valList[pos], dataList[pos] ), ( valList[pos + 1], dataList[pos + 1] ), val )
+    
+    
+    def __GetValFromReversedList( self, val, valList, dataList ):
+        """searches for the value corresponding to a given value in a given valueList and returns the corresponding value from the dataList (treating it as a function data( val ))
+        val: the mass of a star for which a property shall be found [log(Msun)]
+        valList: a list of possible values sorted from largest to smallest
+        dataList: the list to retrieve the value from
+        returns the value corresponding to the given mass, the mass cannot be found exactly it is interpolated/extrapolated"""
+        
+        #make sure to handle masses larger than the largest element correctly
+        if val > valList[1]:
+            return LinInterExtrapolate( ( valList[0], dataList[0] ),( valList[1], dataList[1] ), val )
+        
+        #make sure to handle masses smaller than the smallest element correctly
+        if val < valList[-2]:
+            return LinInterExtrapolate( ( valList[-1], dataList[-1] ),( valList[-2], dataList[-2] ), val )
+        
+        lenValList = len( valList )
+        pos = int( lenValList / 2 )
+        
+        for i in range( int( np.log2( pos ) ) + 1 ):
+            if val == valList[pos]:
+                return dataList[pos]
+            elif valList[pos] < val:
+                if valList[pos - 1] > val:
+                    pos = pos - 1
+                    break
+                else:
+                    pos -= int( lenValList / pow( 2, i + 2 ))
+            else:
+                if valList[pos + 1] < val:
+                    break
+                else:
+                    pos += int( lenValList / pow( 2, i + 2 ))
+        
+        return LinInterExtrapolate( ( valList[pos], dataList[pos] ), ( valList[pos + 1], dataList[pos + 1] ), val )
+    
             
     def GetTimeFromMass( self, mass ):
         """returns the life-expectancy of a star of a given mass
@@ -107,7 +158,7 @@ class cRemnantCalculator():
         
         logMass = np.log10( mass )
         
-        logTimeYr = self.GetValFromList( logMass, self.__Mstar, self.__t )
+        logTimeYr = self.__GetValFromList( logMass, self.__Mstar, self.__t )
         
         return pow( 10.0, logTimeYr - 9.0 )
     
@@ -119,7 +170,7 @@ class cRemnantCalculator():
         
         logTimeYr = np.log10( t ) + 9.0
         
-        logMass = self.GetValFromList( logTimeYr, self.__t, self.__Mstar )
+        logMass = self.__GetValFromReversedList( logTimeYr, self.__t, self.__Mstar )
         
         return pow( 10.0, logMass )
     
@@ -129,7 +180,7 @@ class cRemnantCalculator():
         mass: the mass of a star log[Msun]
         returns the mass of the stellar remnant [Msun]"""
         
-        logMfin = self.GetValFromList( logMass, self.__Mstar, self.__Mfin )
+        logMfin = self.__GetValFromList( logMass, self.__Mstar, self.__Mfin )
         
         return pow( 10.0, logMfin )
     

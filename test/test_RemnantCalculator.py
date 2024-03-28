@@ -16,23 +16,18 @@ def Setup():
     RemCalc = cRemnantCalculator( data, ZH )
     
     return RemCalc
-    
-    
-def test_GetValFromList():
-    """tests if values are returned """
-    
-    RemCalc = Setup()
-    
-    ListA = [ -1.0,1.0,3.0,6.0 ]
-    ListB = [ 2.0,2.5,3.1,4.0 ]
-    
-    assert 1.75 == pytest.approx( RemCalc.GetValFromList( -2.0, ListA, ListB ))
-    assert 2.0 == pytest.approx( RemCalc.GetValFromList( -1.0, ListA, ListB ))
-    assert 2.25 == pytest.approx( RemCalc.GetValFromList( 0.0, ListA, ListB ))
-    assert 2.95 == pytest.approx( RemCalc.GetValFromList( 2.5, ListA, ListB ))
-    assert 3.1 == pytest.approx( RemCalc.GetValFromList( 3.0, ListA, ListB ))
-    assert 4.3 == pytest.approx( RemCalc.GetValFromList( 7.0, ListA, ListB ))
+   
 
+def Setup2():
+    """instantiates a standart version of the class for testing"""
+    
+    data = { "mass[Msun]": [0.1,0.4,0.5,0.8,1.0,2.0], "t_-1.0": [6.0,3.0,2.7,2.5,2.2,2.1], "t_0.0": [6.5,3.2,3.0,2.9,2.8,2.7], "Mfin_-1.0": [0.08,0.3,0.4,0.6,0.8,1.2], "Mfin_0.0":[0.08,0.25,0.4,0.7,0.9,1.5] }
+    ZH = -0.5
+    
+    RemCalc = cRemnantCalculator( data, ZH )
+    
+    return RemCalc
+    
 
 def test_GetTimeFromMass():
     """tests the function to return the time corresponding to a given mass and vice versa"""
@@ -45,10 +40,15 @@ def test_GetTimeFromMass():
     assert 10.0 == pytest.approx( RemCalc.GetMassFromTime( pow( 10.0, -2.75 ) ) )
     assert 8.5 == pytest.approx( RemCalc.GetMassFromTime( pow( 10.0, 0.47233038399997789002 - 3.0 ) ) )
     
-    masses = [8.5, 20.0, 35.5, 40.7, 79.8, 121.0, 134.5 ]
+    masses = [0.1, 0.5, 1.0, 2.0, 4.0, 8.5, 20.0, 35.5, 40.7, 79.8, 121.0, 134.5 ]
     
     for mass in masses:
         assert mass == pytest.approx( RemCalc.GetMassFromTime( RemCalc.GetTimeFromMass( mass ) ))
+        
+    RemCalc2 = Setup2()
+    
+    for mass in masses:
+        assert mass == pytest.approx( RemCalc2.GetMassFromTime( RemCalc2.GetTimeFromMass( mass ) ))
 
 
 def test_GetMfinFromMass():
