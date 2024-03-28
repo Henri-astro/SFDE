@@ -169,3 +169,27 @@ def test_GetRemnantData():
     
     assert -1.2964507017617695 == pytest.approx( RemnantData["Mfin_-0.2"][0] )
     assert -1.111202932543319 == pytest.approx( RemnantData["Mfin_-0.2"][1] )
+
+
+def test_ConstructorSameFile():
+    """tests whether or not the data is read in correctly of the same file is used for all values"""
+    
+    CombinedData = cData( "test/mockdata/GCData.dat", "test/mockdata/CombinedData.dat", "test/mockdata/CombinedData.dat", "test/mockdata/CombinedData.dat" )
+    IndividualData = cData( "test/mockdata/GCData.dat", "test/mockdata/2SNe.dat", "test/mockdata/2Ejecta.dat", "test/mockdata/RemnantData.dat" )
+    
+    
+    #test that the ejecta data and SNe data are treated correctly
+    for mass in [0.08, 0.1, 0.5, 1.0]:
+        assert CombinedData.Ejecta( mass ) == IndividualData.Ejecta( mass )
+        assert CombinedData.SNExplodes( mass ) == IndividualData.SNExplodes( mass )
+    
+    #test that the remnant data is treated correctly
+    CombinedRemData = CombinedData.GetRemnantData()
+    IndRemnantData = IndividualData.GetRemnantData()
+    
+    for Elem in CombinedRemData:
+        if not Elem == "mass[Msun]" or Elem[:2] == "t_" or Elem[:5] == "Mfin_":
+            continue
+        
+        for nElem in range( len( CombinedRemData["mass[Msun]"] ) ):
+            assert CombinedRemData[Elem][nElem] == IndRemnantData[Elem][nElem]

@@ -19,26 +19,35 @@ class cData:
         GCData = cDataReader( GCFile, ["Name", "Mass", "R_a", "R_p", "SFE", "Fe-H", "FeSpread", "Age"] )
         self.__GCData = GCData.GetData()
         
-        #import the SN data
-        SNData = cDataReader( SNFile, ["mass[Msun]", "SN"] )
-        self.__SNData = SNData.GetData()
+        #if the last three files are the same I only need to read in the data once
+        if SNFile == EjectaFile == RemnantFile:
+            StarData = cDataReader( SNFile, ["mass[Msun]", "SN", "Fe[Msun]"] )
+
+            self.__SNData = StarData.GetData()
+            self.__EjectaData = self.__SNData
+            
+        else:
+            #import the SN data
+            SNData = cDataReader( SNFile, ["mass[Msun]", "SN"] )
+            self.__SNData = SNData.GetData()
         
-        #make sure the data is not empty
-        if 0 == len( self.__SNData["mass[Msun]"] ):
-            raise ValueError( "cData: Empty SN data. Please check your SN file." )
+            #import the ejecta data
+            EjectaData = cDataReader( EjectaFile, ["mass[Msun]", "Fe[Msun]"] )
+            self.__EjectaData = EjectaData.GetData()
         
-        #import the ejecta data
-        EjectaData = cDataReader( EjectaFile, ["mass[Msun]", "Fe[Msun]"] )
-        self.__EjectaData = EjectaData.GetData()
-        
-        #make sure the data is not empty
-        if 0 == len( self.__EjectaData["mass[Msun]"] ):
-            raise ValueError( "cData: Empty Ejecta data. Please check your Ejecta file." )
-        
+        #import the remnant data
         RemnantData = cDataReader( RemnantFile, ["mass[Msun]"] )
         self.__RemnantData = RemnantData.GetData()
         
-        #check that at least one column with t and Mfin is present
+        #make sure the SN data is not empty
+        if 0 == len( self.__SNData["mass[Msun]"] ):
+            raise ValueError( "cData: Empty SN data. Please check your SN file." )
+        
+        #make sure the ejecta data is not empty
+        if 0 == len( self.__EjectaData["mass[Msun]"] ):
+            raise ValueError( "cData: Empty Ejecta data. Please check your Ejecta file." )
+        
+        #check that at least one column with t and Mfin is present in the remnant data
         t_present = False
         Mfin_present = False
         

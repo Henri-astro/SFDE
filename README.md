@@ -15,6 +15,12 @@ It is called taking the paths to these 3 files and a path to the output folder a
 python main.py <GC_property_file> <SN_file> <Ejecta_file> <Remnant_file> <output_folder>
 ```
 
+Alternatively the SN, Ejecta and Remnant file can be combined into one file. All columns for all these files must be present in the combined file:
+
+```
+python main.py <GC_property_file> <Combined_file> <output_folder>
+```
+
 The output folder may not exist at the time of calling the script.
 
 All parameters in the input files are organised on columns.
