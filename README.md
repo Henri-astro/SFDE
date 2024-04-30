@@ -6,6 +6,17 @@ SFDE is designed to compute the duration for which star formation (SF) must have
 To this end it takes the current physical and orbit parameters, to determine the size of the GC at birth and then uses the iron spread within the GC members to determine, how much iron must have been expelled by super novae (SNe) befor star formation stopped.
 Using a given function of failed SNe and SNe ejecta depending on the stellar mass SFDE computes which stars exploded before SF ended and from these stars life expectancies, how long SF must have lasted.
 
+## Requirements
+
+The SFDE was tested using the following software packages. We recommend running pytest before trying to run the code with different versions of these packages:
+
+| Package    | Version |
+| :--------- | ------: |
+| python     |  3.8.10 |
+| matplotlib |   3.3.3 |
+| numpy      |  1.23.5 |
+| pandas     |   1.1.5 |
+
 ## Usage
 
 Currently SFDE uses 4 input files: one for the properties of the GCs, one to describe which stars explode in a SN and which don't, one file showing the amount of iron ejected by a star depending on its initial stellar mass and one file showing the remnant masses depending on the initial masses.
