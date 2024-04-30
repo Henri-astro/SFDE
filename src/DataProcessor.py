@@ -80,7 +80,8 @@ class cDataProcessor():
         #do the calculations
         NSNe = []       #number of SNe exploded
         mlasts = []     #the mass of the last star to contribute to SF
-        SFDs = []        #the star formation duration
+        SFDs = []       #the star formation duration
+        NSNePos = []    #the number of SNe the cluster can produce
         
         for nIMF in range( len( IMFs )):
             StarExtractor = cStarExtractor( IMFs[nIMF] )
@@ -88,30 +89,33 @@ class cDataProcessor():
             RemCalc = cRemnantCalculator( data.GetRemnantData(), ZHs[nIMF] )
             
             NSN = 0
-            mlast = IMFs[nIMF].Getbounds()[-1]
             
-            while ProducedIron > 0.0:
-                nextMass = StarExtractor.GetNextMostMassiveStar()
-                
-                if nextMass < 8.0:
-                    mlast = float( "NaN" )
-                    NSN = float( "NaN" )
-                    break
+            NSNe.append( float( "NaN" ) )
+            mlasts.append( float( "NaN" ) )
+            SFDs.append( float( "NaN" ) )
+            
+            nextMass = StarExtractor.GetNextMostMassiveStar()
+            
+            lastSNfound = False
+            
+            while nextMass > 8.0:
                 
                 if data.SNExplodes( nextMass ):
                     ProducedIron -= data.Ejecta( nextMass )
                     NSN += 1
-                    mlast = nextMass
                     
-            NSNe.append( NSN )
-            mlasts.append( mlast )
+                if ProducedIron <= 0 and not lastSNfound:
+                    NSNe[-1] = NSN
+                    mlasts[-1] = nextMass
+                    SFDs[-1] = RemCalc.GetTimeFromMass( nextMass )
+                    lastSNfound = True
+                    
+                nextMass = StarExtractor.GetNextMostMassiveStar()
             
-            if np.isnan( mlast ):
-                SFDs.append( float( "NaN" ) )
-            else:
-                SFDs.append( RemCalc.GetTimeFromMass( mlast ) )
+            NSNePos.append( NSN )
             
         # add columns to data
         data.AddGCData( "NSN", NSNe )
+        data.AddGCData( "NSNPos", NSNePos )
         data.AddGCData( "mlast", mlasts )
         data.AddGCData( "SFD", SFDs )

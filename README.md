@@ -92,6 +92,7 @@ This contains all the GC properties that were read in and additionally the follo
 | :---------------------------------------------- | :--- | :----------- |
 | the total mass of iron produced before SF ends  | Msun | ProducedIron |
 | number of SN exploding before SF ends           |      | NSN          |
+| number of SN exploding in total                 |      | NSNPos       |
 | mass of the last star to explode before SF ends | Msun | mlast        |
 | star formation duration                         | Gyr  | SFD          |
 

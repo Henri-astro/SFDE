@@ -116,6 +116,8 @@ class cData:
             ReturnString += "\n"
             ReturnString += line
             
+        ReturnString += "\n"
+            
         return ReturnString
     
     

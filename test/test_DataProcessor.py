@@ -70,6 +70,7 @@ def test_ComputeIMF():
     compareData["alphas"] = []
     compareData["ProducedIron"] = []
     compareData["NSN"] = []
+    compareData["NSNPos"] = []
     compareData["mlast"] = []
     compareData["SFD"] = []
     
@@ -83,6 +84,7 @@ def test_ComputeIMF():
         compareData["ProducedIron"].append( pIronSun * ( pow( 10.0, compareData["Fe-H"][nGC] + compareData["FeSpread"][nGC] ) - pow( 10.0, compareData["Fe-H"][nGC] - compareData["FeSpread"][nGC] )) * compareData["Mini"][nGC] * ( 1.0 - compareData["SFE"][nGC] ) / compareData["SFE"][nGC] )
         
         compareData["NSN"].append( int( compareData["ProducedIron"][nGC] / data.Ejecta( None ) + 0.999999 ) )
+        compareData["NSNPos"].append( int( MF.GetNumbers( 8.0, MF.Getbounds()[-1] )) )
         compareData["mlast"].append( MF.GetMassStarMinX( MF.Getbounds()[-1], compareData["NSN"][nGC] - 1 ) )
         compareData["SFD"].append( RemCalc.GetTimeFromMass( compareData["mlast"][nGC] ) )
     
@@ -121,5 +123,6 @@ def test_ComputeIMF():
         
         assert compareData["ProducedIron"][nCompElem] == pytest.approx( data.AccessGCData( "ProducedIron" )[nCompElem] )
         assert compareData["NSN"][nCompElem] == pytest.approx( data.AccessGCData( "NSN" )[nCompElem] )
+        assert compareData["NSNPos"][nCompElem] == pytest.approx( data.AccessGCData( "NSNPos" )[nCompElem] )
         assert compareData["mlast"][nCompElem] == pytest.approx( data.AccessGCData( "mlast" )[nCompElem] )
         assert compareData["SFD"][nCompElem] == pytest.approx( data.AccessGCData( "SFD" )[nCompElem] )
