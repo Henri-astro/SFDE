@@ -10,12 +10,31 @@ Using a given function of failed SNe and SNe ejecta depending on the stellar mas
 
 The SFDE was tested using the following software packages. We recommend running pytest before trying to run the code with different versions of these packages:
 
-| Package    | Version |
-| :--------- | ------: |
-| python     |  3.8.10 |
-| matplotlib |   3.3.3 |
-| numpy      |  1.23.5 |
-| pandas     |   1.1.5 |
+| Package         | Version |
+| :-------------- | ------: |
+| python          |  3.8.10 |
+| cycler          |  0.10.0 |
+| kiwisolver      |   1.3.1 |
+| matplotlib      |   3.3.3 |
+| numpy           |  1.23.5 |
+| pandas          |   1.1.5 |
+| pillow          |   7.0.0 |
+| pyparsing       |   2.4.6 |
+| python-dateutil |   2.8.1 |
+| pytz            |  2019.3 |
+| six             |  1.14.0 |
+
+For unittesting:
+
+| Package         | Version |
+| :-------------- | ------: |
+| pytest          |   7.2.1 |
+| attrs           |  19.3.0 |
+| exceptiongroup  |   1.1.0 |
+| iniconfig       |   2.0.0 |
+| packaging       |    20.3 |
+| pluggy          |   1.0.0 |
+| tomli           |   2.0.1 |
 
 ## Usage
 
