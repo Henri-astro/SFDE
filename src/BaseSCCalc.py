@@ -44,3 +44,41 @@ def ComputeMini( Dens ):
     returns the initial cluster mass [Msun]"""
     
     return pow( Dens, 1.0/0.61 ) * pow( 10.0, -2.08/0.61 )
+
+
+def ComputeTidalRadius( mass, Rperi ):
+    """computes the tidal radius of a GC
+    mass: cluster mass [Msun]
+    Rperi: the distance of the pericentre from the galactic centre [kpc]
+    returns the tidal radius [pc]"""
+    
+    return pow( 4.44e-8 * mass, 1.0/3.0 ) * pow( Rperi * 1000.0, 2.0/3.0 )
+
+
+def ComputeKingRadius( r, sfe ):
+    """a function to compute the King radius
+    r: the half-mass radius of the cluster [pc]
+    returns the King radius [pc]"""
+    
+    return np.sqrt( 3.0/sfe ) * r
+
+
+def ComputeConcentrationParametre( mass, Rperi, sfe ):
+    """computes the concentration of an embedded SC
+    mass: the mass of the SC [Msun]
+    Rperi: the pericentre distance from the SC to the galactic centre [kpc]
+    sfe: the star formation efficiency
+    returns the concentration parametre"""
+    
+    r_t = ComputeTidalRadius( mass, Rperi )
+    r_0 = ComputeKingRadius( MassToRadius( mass ), sfe )
+    
+    return np.log10( r_t/r_0 )
+
+
+def ComputeKingConcentrationParameter( c ):
+    """computes the King concentration parameter from the concentration parameter
+    c: the concentration parameter of the SC
+    returns the King concentration parameter W0"""
+    
+    return 4.38 * c

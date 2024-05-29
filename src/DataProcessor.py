@@ -37,11 +37,12 @@ class cDataProcessor():
         Ages = data.AccessGCData( "Age" )
         Rapos = data.AccessGCData( "R_a" )
         Rperis = data.AccessGCData( "R_p" )
+        SFEs = data.AccessGCData( "SFE" )
         
         #do the computation
         RemCalcs = [ cRemnantCalculator( data.GetRemnantData(), ZH ) for ZH in ZHs ]
         IMFGenerators = [ cIMFGenerator( RemCalc ) for RemCalc in RemCalcs ]
-        IMFs = [ IMFGenerators[ nElem ].ComputeIMFFromToday( Ms[ nElem ], Ages[ nElem ], Rapos[ nElem ], Rperis[ nElem ] ) for nElem in range( len( Ms ) ) ]
+        IMFs = [ IMFGenerators[ nElem ].ComputeIMFFromToday( Ms[ nElem ], Ages[ nElem ], Rapos[ nElem ], Rperis[ nElem ], SFEs[ nElem ] ) for nElem in range( len( Ms ) ) ]
         
         #write the results into the data
         data.AddGCData( "IMF", IMFs )

@@ -56,3 +56,51 @@ def test_ComputeDens():
         Res = ComputeMini( ComputeDens( Mini ))
         
         assert pytest.approx( Res, epsilon ) == Mini
+
+
+def test_ComputeTidalRadius():
+    """tests that the tidal radius is computed correctly"""
+    
+    #values for NGC 104 according to Baumgardts catalogue
+    M = 8.53e5
+    R = 7.52
+    r_t = 124.63
+    
+    assert pytest.approx( ComputeTidalRadius( M, R ), 5 ) == r_t
+    
+    #values for NGC 288 according to Baumgardts catalogue
+    M = 9.62e4
+    R = 12.21
+    r_t = 95.16
+    
+    assert pytest.approx( ComputeTidalRadius( M, R ), 2e-1 ) == r_t
+
+
+def test_ComputeKingRadius():
+    """tests that the King radius is computed correctly"""
+    
+    rh = 1.0
+    sfe = 0.3
+    r0 = 3.162278
+    
+    assert pytest.approx( ComputeKingRadius( rh, sfe ), 1e-4 ) == r0
+
+
+def test_ComputeConcentrationParametre():
+    """tests that the concentration parameter is computed correctly"""
+    
+    #values for NGC 288 according to Baumgardts catalogue (apart from sfe)
+    M = 9.62e4
+    Rperi = 12.21
+    sfe = 0.3
+    
+    assert pytest.approx( ComputeConcentrationParametre( M, Rperi, sfe ), 1e-1 ) == 1.8
+
+
+def test_ComputeKingConcentrationParameter():
+    """tests that the King concentration parameter is computed correctly"""
+    
+    c = 1.0
+    W0 = 4.38
+    
+    assert pytest.approx( ComputeKingConcentrationParameter( c ) ) == W0

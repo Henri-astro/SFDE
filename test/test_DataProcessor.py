@@ -78,7 +78,7 @@ def test_ComputeIMF():
         RemCalc = cRemnantCalculator( RemnantReader.GetData(), compareData["Fe-H"][nGC] + 0.3 )
         IMFGen = cIMFGenerator( RemCalc )
         MF = IMFGen.ComputeMF( compareData["Mini"][nGC] )
-        compareData["Mass"].append( IMFGen.ComputeCurrentMass( compareData["Mini"][nGC], compareData["R_a"][nGC], compareData["R_p"][nGC], compareData["Age"][nGC] ) )
+        compareData["Mass"].append( IMFGen.ComputeCurrentMass( compareData["Mini"][nGC], compareData["R_a"][nGC], compareData["R_p"][nGC], compareData["SFE"][nGC], compareData["Age"][nGC] ) )
         compareData["alphas"].append( IMFGen.ComputeAlpha( compareData["Mini"][nGC] ))
         
         compareData["ProducedIron"].append( pIronSun * ( pow( 10.0, compareData["Fe-H"][nGC] + compareData["FeSpread"][nGC] ) - pow( 10.0, compareData["Fe-H"][nGC] - compareData["FeSpread"][nGC] )) * compareData["Mini"][nGC] * ( 1.0 - compareData["SFE"][nGC] ) / compareData["SFE"][nGC] )

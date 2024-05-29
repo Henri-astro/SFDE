@@ -4,7 +4,7 @@ import numpy as np
 
 #own packages
 from src.massfunction import cMassFunction
-from src.BaseSCCalc import ComputeDens
+from src.BaseSCCalc import ComputeDens, ComputeConcentrationParametre, ComputeKingConcentrationParameter
 
 
 METAL_IN_SUN = 0.0142
@@ -18,9 +18,7 @@ class cIMFGenerator():
         
         self.__ZH = RemCalc.GetZH()
         self.__RemCalc = RemCalc
-        self.__beta = 1.91
         self.__gamma = 0.02
-        self.__x = 0.75
     
     
     def ComputeAlpha( self, Mini ):
@@ -44,6 +42,21 @@ class cIMFGenerator():
             alpha[2] = -0.41 * y + 1.94
             
         return alpha
+    
+    
+    def ComputeBetaAndX( self, Mini, Rperi, SFE ):
+        """computes the parameters beta and x for the computations of Mini
+        Mini: the initial mass [Msun]
+        Rperi: the pericentre distance [kpc]
+        beta, x: the parameters beta and x for the modified Eq. 10 by Baumgardt and Makino (2003)"""
+        
+        c = ComputeConcentrationParametre( Mini, Rperi, SFE )
+        W0 = ComputeKingConcentrationParameter( c )
+        
+        beta = 4.11 - 0.44 * W0
+        x = 0.575 + 0.035 * W0
+        
+        return beta, x
     
     
     def CheckUpperEnd( self, MF ):
@@ -92,7 +105,7 @@ class cIMFGenerator():
         return MF
     
     
-    def __HelperComputeMFFromToday( self, M, Age, Rapo, Rperi, Mini ):
+    def __HelperComputeMFFromToday( self, M, Age, Rapo, Rperi, SFE, Mini ):
         """Computes the initial masses of the clusters given in data
         M: the present day mass [Msun]
         Age: the age of the cluster [Gyr]
@@ -109,14 +122,16 @@ class cIMFGenerator():
         
         N = IMF.GetTotNumbers()
         
+        beta, x = self.ComputeBetaAndX( Mini, Rperi, SFE )
+        
         p_SF = self.__RemCalc.GetMfinFromMassFunct( IMF, 1.0 ) / IMF.GetMtot()
         
-        Err = self.__beta * pow( N / np.log( self.__gamma * N ), self.__x ) * Factor * ( 1.0 - M / ( p_SF * Mini )) / ( Age * 1000.0 ) - 1.0
+        Err = beta * pow( N / np.log( self.__gamma * N ), x ) * Factor * ( 1.0 - M / ( p_SF * Mini )) / ( Age * 1000.0 ) - 1.0
         
         return Err
     
     
-    def ComputeIMFFromToday( self, M, Age, Rapo, Rperi ):
+    def ComputeIMFFromToday( self, M, Age, Rapo, Rperi, SFE ):
         """computes the initial mass function based on todays data
         M: current mass of the GC
         Age: the current age of the GC [Gyr]
@@ -135,12 +150,12 @@ class cIMFGenerator():
         #iteratively compute Mini
         for i in range( 100 ):
             
-            Error = self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini )
+            Error = self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, SFE, Mini )
             
             if abs( Error ) < epsilon:
                 return self.ComputeMF( Mini )
             
-            Derr = 0.5 * ( self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini + dM ) - self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, Mini - dM )) / dM
+            Derr = 0.5 * ( self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, SFE, Mini + dM ) - self.__HelperComputeMFFromToday( M, Age, Rapo, Rperi, SFE, Mini - dM )) / dM
             
             Mini -= Error / Derr
             
@@ -148,7 +163,7 @@ class cIMFGenerator():
             warnings.warn( "Warning: cIMFGenerator: ComputeMFFromToday: Mini did not converge!" )
 
 
-    def ComputeCurrentMass( self, Mini, Rapo, Rperi, Age ):
+    def ComputeCurrentMass( self, Mini, Rapo, Rperi, SFE, Age ):
         """computes the current mass of a GC after the time t
         Mini: the initial mass of the GC [Msun]
         ZH: the Metallicity of the GC
@@ -160,7 +175,12 @@ class cIMFGenerator():
         
         IMF = self.ComputeMF( Mini )
         
+        beta, x = self.ComputeBetaAndX( Mini, Rperi, SFE )
+        
+        print( beta )
+        print( x )
+        
         N = IMF.GetTotNumbers()
         p_SF = self.__RemCalc.GetMfinFromMassFunct( IMF, 1.0 ) / IMF.GetMtot()    #1.0 is the time after which the cutoff for initial mass loss happens [Gyr]
         
-        return p_SF * Mini * ( 1.0 - ( Age * 1000.0 ) / ( self.__beta * Rapo * ( 1 - e ) ) * pow( N / np.log( self.__gamma * N ), -self.__x ) )
+        return p_SF * Mini * ( 1.0 - ( Age * 1000.0 ) / ( beta * Rapo * ( 1 - e ) ) * pow( N / np.log( self.__gamma * N ), -x ) )
