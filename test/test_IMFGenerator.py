@@ -58,7 +58,7 @@ def test_ComputeBetaAndX():
     Rperi = 12.21
     SFE = 0.3
     
-    beta = 0.666
+    beta = 0.840
     x = 0.849
     
     IMFGen = cIMFGenerator( SetupRemCalc( 0.0 ) )
@@ -116,55 +116,55 @@ def test_ComputeMF():
 def test_ComputeIMFFromToday():
     """checks that the initial mass function is computed correctly"""
     
-    ##create the initial values of a realistic GC:
-    #Mini = 1e6
-    #ZH = -2.0
+    #create the initial values of a realistic GC:
+    Mini = 1e6
+    ZH = -2.0
     SFE = 0.3
     
-    ##orbital parameters
-    #Rapo = 8.0
-    #e = 0.5
+    #orbital parameters
+    Rapo = 8.0
+    e = 0.5
     
-    #Rperi = Rapo * ( 1.0 - e ) / ( 1.0 + e )
+    Rperi = Rapo * ( 1.0 - e ) / ( 1.0 + e )
     
     #the age of the GC in Myr
     t = 12.0
     
-    ##initialize the remnant calculator
-    #data = { "mass[Msun]": [0.0,1.0,2.0], "t_-1.0": [9.0,6.0,3.0], "t_0.0": [9.0,6.5,3.2], "Mfin_-1.0": [0.5,0.8,1.2], "Mfin_0.0":[0.4,0.9,1.5] }
-    #RemCalc = cRemnantCalculator( data, ZH )
+    #initialize the remnant calculator
+    data = { "mass[Msun]": [0.0,1.0,2.0], "t_-1.0": [9.0,6.0,3.0], "t_0.0": [9.0,6.5,3.2], "Mfin_-1.0": [0.5,0.8,1.2], "Mfin_0.0":[0.4,0.9,1.5] }
+    RemCalc = cRemnantCalculator( data, ZH )
     
-    ##compute the present-day mass for that GC
-    #IMFGen = cIMFGenerator( RemCalc )
-    #M = IMFGen.ComputeCurrentMass( Mini, Rapo, Rperi, SFE, t )
+    #compute the present-day mass for that GC
+    IMFGen = cIMFGenerator( RemCalc )
+    M = IMFGen.ComputeCurrentMass( Mini, Rapo, Rperi, SFE, t )
     
-    #assert M < Mini
+    assert M < Mini
     
-    ##do the calculations
-    #IMF = IMFGen.ComputeIMFFromToday( M, t, Rapo, Rperi, SFE )
+    #do the calculations
+    IMF = IMFGen.ComputeIMFFromToday( M, t, Rapo, Rperi, SFE )
     
-    #assert Mini == pytest.approx( IMF.GetMtot() )
+    assert Mini == pytest.approx( IMF.GetMtot() )
     
-    ##2nd case
-    #Mini2 = 1e7
-    #ZH2 = -1.5
+    #2nd case
+    Mini2 = 1e7
+    ZH2 = -1.5
     
-    #RemCalc2 = cRemnantCalculator( data, ZH2 )
+    RemCalc2 = cRemnantCalculator( data, ZH2 )
     
-    ##compute the present-day mass for that GC
-    #IMFGen2 = cIMFGenerator( RemCalc2 )
-    #M2 = IMFGen2.ComputeCurrentMass( Mini2, Rapo, Rperi, SFE, t )
+    #compute the present-day mass for that GC
+    IMFGen2 = cIMFGenerator( RemCalc2 )
+    M2 = IMFGen2.ComputeCurrentMass( Mini2, Rapo, Rperi, SFE, t )
     
-    ##do the calculations
-    #IMF2 = IMFGen2.ComputeIMFFromToday( M2, t, Rapo, Rperi, SFE )
+    #do the calculations
+    IMF2 = IMFGen2.ComputeIMFFromToday( M2, t, Rapo, Rperi, SFE )
     
-    #assert Mini2 == pytest.approx( IMF2.GetMtot() )
+    assert Mini2 == pytest.approx( IMF2.GetMtot() )
     
-    ## test NGC 2298 (not anymore)
-    #Mini3 = 1e6
-    #ZH3 = -1.62
-    #Rapo3 = 16.49
-    #Rperi3 = 0.97
+    # testcase 3
+    Mini3 = 1e6
+    ZH3 = -1.62
+    Rapo3 = 16.49
+    Rperi3 = 0.97
     
     data2 = { "mass[Msun]": [-1.0969100130080565,1.2811318113306203,1.4905601716686168,1.7004783792473719,1.9095126511112555,2.109930732634646,2.176091259055681],\
         "t_-1.67": [14.781965892799771,7.0116178624137095,6.782656630008358,6.6271309462829295,6.5458504858751345,6.536877443455831,6.548735818688512],\
@@ -176,19 +176,19 @@ def test_ComputeIMFFromToday():
         "Mfin_-0.37": [-1.2547690154718592,0.6007366361903759,0.749345119848031,0.8958958127226768,1.0394371222929097,1.1748198121819418,1.2190293852418737],\
         "Mfin_-0.2": [-1.2964507017617695,0.6508813453057455,0.8132025672636466,0.9744135854483941,1.1334635389646466,1.2845685581693704,1.3341516505881326] }
     
-    #RemCalc3 = cRemnantCalculator( data2, ZH3 )
+    RemCalc3 = cRemnantCalculator( data2, ZH3 )
     
-    ##compute the present-day mass for that GC
-    #IMFGen3 = cIMFGenerator( RemCalc3 )
-    #M3 = IMFGen3.ComputeCurrentMass( Mini3, Rapo3, Rperi3, SFE, t )
+    #compute the present-day mass for that GC
+    IMFGen3 = cIMFGenerator( RemCalc3 )
+    M3 = IMFGen3.ComputeCurrentMass( Mini3, Rapo3, Rperi3, SFE, t )
     
-    ##do the calculations
-    #IMF3 = IMFGen3.ComputeIMFFromToday( M3, t, Rapo3, Rperi3, SFE )
+    #do the calculations
+    IMF3 = IMFGen3.ComputeIMFFromToday( M3, t, Rapo3, Rperi3, SFE )
     
-    #assert Mini3 == pytest.approx( IMF3.GetMtot(), 2e-6 )
+    assert Mini3 == pytest.approx( IMF3.GetMtot(), 2e-6 )
 
-    #test for NGC 5824
-    #Mini4 = 6e6
+    #testcase 4
+    Mini4 = 6e6
     ZH4 = -1.874
     Rapo4 = 33.72
     Rperi4 = 12.48
@@ -197,9 +197,7 @@ def test_ComputeIMFFromToday():
     
     #compute the present-day mass for that GC
     IMFGen4 = cIMFGenerator( RemCalc4 )
-    for Mini4 in [2e6,3e6,3.5e6,4e6,4.1e6,4.2e6,4.3e6,4.4e6,4.5e6,4.6e6,4.7e6,4.8e6,4.9e6,5e6]:
-        print( str( Mini4 ) + ", " + str( IMFGen4.ComputeCurrentMass( Mini4, Rapo4, Rperi4, SFE, t ) ))
-    M4 = 849000.0
+    M4 = IMFGen4.ComputeCurrentMass( Mini4, Rapo4, Rperi4, SFE, t )
     
     #do the calculations
     IMF4 = IMFGen4.ComputeIMFFromToday( M4, t, Rapo4, Rperi4, SFE )

@@ -70,13 +70,6 @@ class cData:
         if 0 == len( self.__RemnantData["mass[Msun]"] ):
             raise ValueError( "cData: Empty Remnant data. Please check your Remnant file." )
         
-        #change all the initial and remnant masses into their logarithms
-        self.__RemnantData["mass[Msun]"] = tuple( np.log10( logmass ) for logmass in self.__RemnantData["mass[Msun]"] )
-        
-        for Elem in self.__RemnantData:
-            if Elem[:5] == "Mfin_":
-                self.__RemnantData[Elem] = tuple( np.log10( logmass ) for logmass in self.__RemnantData[Elem] )
-        
         
     def AccessGCData( self, ColumnName ):
         """return a single column from the GC data

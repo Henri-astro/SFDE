@@ -143,8 +143,8 @@ def test_GetRemnantData():
     
     RemnantData = data.GetRemnantData()
     
-    assert -1.0969100130080565 == pytest.approx( RemnantData["mass[Msun]"][0] )
-    assert -0.8804142250382161 == pytest.approx( RemnantData["mass[Msun]"][1] )
+    assert 0.07999999999999999 == pytest.approx( RemnantData["mass[Msun]"][0] )
+    assert 0.13170000000000004 == pytest.approx( RemnantData["mass[Msun]"][1] )
     
     assert 14.781965892799771 == pytest.approx( RemnantData["t_-1.67"][0] )
     assert 13.68137744911132 == pytest.approx( RemnantData["t_-1.67"][1] )
@@ -158,17 +158,17 @@ def test_GetRemnantData():
     assert 14.082641523009046 == pytest.approx( RemnantData["t_-0.2"][0] )
     assert 13.09520930625935 == pytest.approx( RemnantData["t_-0.2"][1] )
     
-    assert -1.0683387603155188 == pytest.approx( RemnantData["Mfin_-1.67"][0] )
-    assert -0.9051796196452 == pytest.approx( RemnantData["Mfin_-1.67"][1] )
+    assert 0.08544 == pytest.approx( RemnantData["Mfin_-1.67"][0] )
+    assert 0.12440000000000007 == pytest.approx( RemnantData["Mfin_-1.67"][1] )
     
-    assert -1.199145508496439 == pytest.approx( RemnantData["Mfin_-0.67"][0] )
-    assert -1.023741750742955 == pytest.approx( RemnantData["Mfin_-0.67"][1] )
+    assert 0.06322 == pytest.approx( RemnantData["Mfin_-0.67"][0] )
+    assert 0.09467999999999999 == pytest.approx( RemnantData["Mfin_-0.67"][1] )
     
-    assert -1.2547690154718592 == pytest.approx( RemnantData["Mfin_-0.37"][0] )
-    assert -1.073091898294564 == pytest.approx( RemnantData["Mfin_-0.37"][1] )
+    assert 0.05562000000000002 == pytest.approx( RemnantData["Mfin_-0.37"][0] )
+    assert 0.08451000000000003 == pytest.approx( RemnantData["Mfin_-0.37"][1] )
     
-    assert -1.2964507017617695 == pytest.approx( RemnantData["Mfin_-0.2"][0] )
-    assert -1.111202932543319 == pytest.approx( RemnantData["Mfin_-0.2"][1] )
+    assert 0.05052999999999998 == pytest.approx( RemnantData["Mfin_-0.2"][0] )
+    assert 0.07740999999999999 == pytest.approx( RemnantData["Mfin_-0.2"][1] )
 
 
 def test_ConstructorSameFile():

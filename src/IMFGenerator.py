@@ -53,7 +53,7 @@ class cIMFGenerator():
         c = ComputeConcentrationParametre( Mini, Rperi, SFE )
         W0 = ComputeKingConcentrationParameter( c )
         
-        beta = 4.11 - 0.44 * W0
+        beta = 36.63 * pow( W0, -1.835 )
         x = 0.575 + 0.035 * W0
         
         return beta, x
@@ -176,9 +176,6 @@ class cIMFGenerator():
         IMF = self.ComputeMF( Mini )
         
         beta, x = self.ComputeBetaAndX( Mini, Rperi, SFE )
-        
-        print( beta )
-        print( x )
         
         N = IMF.GetTotNumbers()
         p_SF = self.__RemCalc.GetMfinFromMassFunct( IMF, 1.0 ) / IMF.GetMtot()    #1.0 is the time after which the cutoff for initial mass loss happens [Gyr]
