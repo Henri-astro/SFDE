@@ -129,3 +129,65 @@ This contains all the GC properties that were read in and additionally the follo
 Additionally the program creates a barcode plot for each cluster that produces enough SNe to generate its observed iron spread.
 These plots are generated in the subfolder 'Barcodes'.
 The files are named after the cluster names.
+
+## Data from the following sources is delivered with this package
+
+Bailin, J. 2019, ApJS, 245, 5
+
+Hilker M., Baumgardt H., Sollima A., Bellini A., 2019, Proceedings of the International Astronomical Union, 14, 451–454
+
+Maoz, D. & Graur, O. 2017, ApJ, 848, 25
+
+Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., & Janka, H. T. 2016, ApJ, 821, 38
+
+Yan Z., Jerabkova T., Kroupa P., Vazdekis A., 2019, A&A, 629, A93
+
+## For developers
+
+SFDE is designed highly modular, therefore, individual parts can be easily replaced. The package contains the following files:
+
+### BaseSCCalc.py
+
+This file contains basic functions to compute the properties of a stellar cluster like its initial density, its tidal radius e.t.c.
+
+### common.py
+
+This file contains commonly used mathematical functions like an inter- and extrapolation method.
+
+### Data.py
+
+This file contains the class that holds all the data used during the calculations.
+
+depends on: common.py, DataReader.py
+
+### DataProcessor.py
+
+This file contains the main processing routines of the program.
+
+depends on: common.py, IMFGenerator.py, RemnantCalculator.py, StarExtractor.py
+
+### DataReader.py
+
+This file contains the routines needed to read in the input files.
+
+### DataWriter.py
+
+This file contains the routines that create the output folder and all the textfiles and plots within it.
+
+### IMFGenerator.py
+
+This file contains the routines nedded to compute the initial mass function. It also computes the initial mass of the clusters.
+
+depends on: massfunction.py, BaseSCCalc.py
+
+### massfunction.py
+
+This file contains the class to hold the initial mass function and all its properties
+
+### RemnantCalculator.py
+
+This file contains all the routines to compute the stellar lifetimes and remnant mass from the initial mass and vice versa.
+
+### StarExtractor.py
+
+This file contains routines to iterate through the stars of a cluster from the most massive to the least massive one.

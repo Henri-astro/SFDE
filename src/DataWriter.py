@@ -57,7 +57,7 @@ class cDataWriter():
         nSamples = 550
         mmin = 8.0
         
-        plt.figure( figsize = [3.5,1.5], dpi = 200)
+        fig = plt.figure( num = 0, figsize = [3.5,1.5], dpi = 200)
         plt.rcParams.update({'font.size': 8})
         
         for nSC in range( len( Names )):
@@ -84,7 +84,8 @@ class cDataWriter():
             plt.xscale( "log" )
             
             plt.xlabel( "$m [M_\\odot]$" )
-            plt.text( max( 11.0, mlasts[nSC] ), 1.05, "$t_{SF} = " + "{:.1f}".format( SFDs[nSC] * 1000.0 ) + "$ Myr", ha = "center" )
+            plt.text( mlasts[nSC], 1.05, " $t_{SF} = " + "{:.1f}".format( SFDs[nSC] * 1000.0 ) + "$ Myr ", ha = "left" if mlasts[nSC] < 80 else "right" )
+            plt.arrow( mlasts[nSC] - 0.1, 1.15, 0.0, -0.11, color = "black", lw = 1, clip_on=False, head_width = 0.03 * mlasts[nSC], head_length = 0.03, head_starts_at_zero = False )
             
             plt.gca().axes.get_yaxis().set_visible(False)
             

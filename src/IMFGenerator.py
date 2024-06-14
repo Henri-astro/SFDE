@@ -14,7 +14,7 @@ class cIMFGenerator():
     
     def __init__( self, RemCalc ):
         """initialises the generator
-        RemCalc: the remnant calculator to use (also contains the metallicity used"""
+        RemCalc: the remnant calculator (cRemnantCalculator) to use (also contains the metallicity used)"""
         
         self.__ZH = RemCalc.GetZH()
         self.__RemCalc = RemCalc
