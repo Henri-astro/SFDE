@@ -61,7 +61,7 @@ class cDataProcessor():
         FeSpreads = data.AccessGCData( "FeSpread" )
         
         #do the calculations
-        ProducedIron = [ pIronSun * ( pow( 10.0, FHs[nSC] + FeSpreads[nSC] ) - pow( 10.0, FHs[nSC] - FeSpreads[nSC] ) ) * Minis[nSC] * ( 1.0 / SFEs[nSC] - 1.0 ) for nSC in range( len( Minis ) ) ]
+        ProducedIron = [ 0.5 * pIronSun * ( pow( 10.0, FHs[nSC] + FeSpreads[nSC] ) - pow( 10.0, FHs[nSC] - FeSpreads[nSC] ) ) * Minis[nSC] * ( 1.0 / SFEs[nSC] - 1.0 ) for nSC in range( len( Minis ) ) ]
         
         #write results back into the data
         data.AddGCData( "ProducedIron", ProducedIron )
