@@ -75,8 +75,6 @@ class cDataWriter():
                     Masses.insert( nMass - 1, mlasts[nSC] )
                     break
             
-            Colours = []
-            
             for nMass in range( 1, len( Masses ) ):
                 mass = 0.5 * ( Masses[nMass] + Masses[nMass - 1] )
                 if not data.SNExplodes( mass ):
@@ -86,7 +84,6 @@ class cDataWriter():
                 else:
                     plt.fill( [Masses[nMass - 1], Masses[nMass - 1], Masses[nMass], Masses[nMass]], [0,1,1,0], "red" )
                     
-            #plt.bar( Masses, 1, color = Colours, lw = 1 )
             plt.xscale( "log" )
             
             plt.xlabel( "$m [M_\\odot]$" )
