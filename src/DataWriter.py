@@ -54,7 +54,7 @@ class cDataWriter():
         SFDs = data.AccessGCData( "SFD" )
         
         # create the colour scheme
-        nSamples = 550
+        nSamples = 1000
         mmin = 8.0
         
         plt.style.use('dark_background')
@@ -72,21 +72,25 @@ class cDataWriter():
             
             Masses = [ pow( 10.0, np.log10( mmin ) + i * logDist ) for i in range( nSamples + 1 ) ]
             
-            Colours = []
+            for nMass in range( 1, len( Masses ) ):
+                if Masses[nMass] > mlasts[nSC]:
+                    Masses.insert( nMass - 1, mlasts[nSC] )
+                    break
             
-            for mass in Masses:
+            for nMass in range( 1, len( Masses ) ):
+                mass = 0.5 * ( Masses[nMass] + Masses[nMass - 1] )
                 if not data.SNExplodes( mass ):
-                    Colours.append( "black" )
+                    plt.fill( [Masses[nMass - 1], Masses[nMass - 1], Masses[nMass], Masses[nMass]], [0,1,1,0], "black" )
                 elif mass < mlasts[nSC]:
-                    Colours.append( "grey" )
+                    plt.fill( [Masses[nMass - 1], Masses[nMass - 1], Masses[nMass], Masses[nMass]], [0,1,1,0], "grey" )
                 else:
-                    Colours.append( "red" )
+                    plt.fill( [Masses[nMass - 1], Masses[nMass - 1], Masses[nMass], Masses[nMass]], [0,1,1,0], "red" )
                     
-            plt.bar( Masses, 1, color = Colours, lw = 10 )
             plt.xscale( "log" )
             
             plt.xlabel( "$m [M_\\odot]$" )
             plt.text( mlasts[nSC], 1.05, " $t_{SF} = " + "{:.1f}".format( SFDs[nSC] * 1000.0 ) + "$ Myr ", ha = "left" if mlasts[nSC] < 80 else "right" )
+
             plt.arrow( mlasts[nSC] - 0.1, 1.15, 0.0, -0.11, color = "white", lw = 1, clip_on=False, head_width = 0.03 * mlasts[nSC], head_length = 0.03, head_starts_at_zero = False )
             
             plt.gca().axes.get_yaxis().set_visible(False)
