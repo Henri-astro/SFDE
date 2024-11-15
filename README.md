@@ -191,3 +191,7 @@ This file contains all the routines to compute the stellar lifetimes and remnant
 ### StarExtractor.py
 
 This file contains routines to iterate through the stars of a cluster from the most massive to the least massive one.
+
+## References
+
+Wirth H., Haas J., Šubr L., Jerabkova T., Yan Z., Kroupa P.: Failed supernova explosions increase the duration of star formation in globular clusters. Astronomy & Astrophysics, 691, A227 (2024)
